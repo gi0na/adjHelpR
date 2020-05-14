@@ -1,11 +1,24 @@
-Package: graphHandlR
+Package: adjConvertR
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Create and Handle Adjacency Matrices
 Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+Authors@R: c(
+    person("Giona", "Casiraghi", email = "giona@ethz.ch",
+            role = c("aut", "cre"), comment = c(ORCID = "0000-0003-0233-5747"))
+            )
+Description: This package provides a set of functions to deal with adjacency matrices
+    in R. It allows to generate adjacency matrices from weighted edgelists, create 
+    weighted edgelists from edgelists with repeated edges, and handle these objects.
+    It exploits `dplyr` and `tibble`s to deal efficiently with large edgelists, and
+    `Matrix` sparse matrices to store adjacency matrices in sparse format.
+License: AGPL-3
+Depends: R (>= 3.0)
+Imports: Matrix,
+         dplyr,
+         reshape2,
+         methods,
+         magrittr,
+         rlang
 Encoding: UTF-8
 LazyData: true
+RoxygenNote: 7.1.0
