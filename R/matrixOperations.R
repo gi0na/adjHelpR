@@ -1,13 +1,21 @@
-#' Auxiliary function, gives mask for matrix for directed,
-#' undirected etc.
+#' Auxiliary function, gives mask for matrix for directed, undirected etc.
 #'
-#' @param x  matrix
-#' @param directed  a boolean argument specifying whether object is directed or not.
-#' @param arr.ind boolean, return vector of indices or tuple with array indices? defaults to FALSE
-#' @param selfloops  a boolean argument specifying whether the model should incorporate selfloops.
+#' `x` can either be the matrix, the number of nodes or a vector of nodes. If x
+#' is a list, it is assumed that the first element of the list is the vector of
+#' row-nodes, and the second element the vector of column-nodes. If x is a
+#' numeric vector of length 2, it is assumed that x is the dimensions of the
+#' matrix.
 #'
-#' @return
-#' a boolean matrix that can be used to mask adjacency matrices.
+#' @param x either a matrix, the number of nodes, or the vector containg the
+#'   nodes
+#' @param directed  a boolean argument specifying whether object is directed or
+#'   not. When absent it is inferred from `x`.
+#' @param selfloops  a boolean argument specifying whether the model should
+#'   incorporate selfloops. When absent it is inferred from `x`.
+#' @param arr.ind boolean, return vector of indices or tuple with array indices?
+#'   defaults to FALSE
+#'
+#' @return a boolean matrix that can be used to mask adjacency matrices.
 #'
 #' @export
 #' @importFrom methods new
@@ -17,22 +25,79 @@
 #'                 attr= c( 12, 6, 12 , 6 , 6 , 6 ))
 #' adj <- el2adj(el)
 #' mat2vec_ix(adj, directed = TRUE, selfloops=FALSE)
-mat2vec_ix <- function(x, directed,
-                       selfloops, arr.ind = FALSE) {
+#' mat2vec_ix(adj)
+#' mat2vec_ix(x=nrow(adj), directed = TRUE, selfloops=FALSE)
+#' mat2vec_ix(x=rownames(adj), directed = TRUE, selfloops=FALSE)
+mat2vec_ix <- function(x=NULL, directed=NULL, selfloops=NULL,
+                       arr.ind = FALSE) {
   # Returns the indices to
   # vectorise adjacency matrices
   # removing unused entries in the
   # case of undirected or no
   # selfloops graphs
-  dat <- .mat2vec_ix(x, directed,selfloops)
+
+  n <- nodes <- NULL
+  if(!(is.matrix(x) | "Matrix"%in%attributes(class(x)))){
+    if(is.list(x) | length(x)>2 | (length(x)==2 & !is.numeric(x))){
+      nodes <- x
+      x <- NULL
+    } else{
+      if(!is.list(x) & length(x)<=2 & is.numeric(x)){
+        n <- x
+        x <- NULL
+      } else{
+        x <- NULL
+      }
+    }
+  }
+
+  if(is.null(x) & is.null(n) & is.null(nodes))
+    stop('Specify x in a compatible format.')
+  if(any(c(is.null(directed), is.null(selfloops)))){
+    if(is.null(x))
+      stop('directed or selfloops were not specified and cannot be inferred.')
+    out <- check_specs(x)
+    directed <- out['directed']
+    selfloops <- out['selfloops']
+  }
+
+  # get nrow and ncol. x has priority over n over nodes
+  if(!is.null(x)){
+    dims <- dim(x)
+  } else{
+    if(!is.null(n)){
+      if(length(n)==2){
+        dims <- c(n[1], n[2])
+      } else{
+        dims <- rep(n[1],2)
+      }
+    } else{
+      if(!is.null(nodes)){
+        if(!is.list(nodes)){
+          dims <- rep(length(nodes),2)
+        } else{
+          if(is.list(nodes)){
+            dims <- c(length(nodes[[1]]), length(nodes[[2]]))
+          } else{
+            stop('Wrong nodes dimensions.')
+          }
+        }
+      }
+    }
+  }
+  if(dims[1]!=dims[2]){
+    directed <- TRUE
+    selfloops <- TRUE
+  }
+
+  dat <- .mat2vec_ix(x, dims[1], dims[2], directed, selfloops)
   if(arr.ind)
     return(dat)
-  y <- methods::new("ngTMatrix", i=as.integer(dat$row-1), j=as.integer(dat$col-1), Dim=dim(x))
+  y <- methods::new("ngTMatrix", i=as.integer(dat$row-1), j=as.integer(dat$col-1), Dim=as.integer(dims))
   return(Matrix::which(y))
 }
 
-.mat2vec_ix <- function(x, directed,
-                         selfloops) {
+.mat2vec_ix <- function(x, n_row, n_col, directed, selfloops){
   # Returns the indices to
   # vectorise adjacency matrices
   # removing unused entries in the
@@ -40,8 +105,8 @@ mat2vec_ix <- function(x, directed,
   # selfloops graphs
 
   dplyr::left_join(
-    dplyr::tibble(row = 1:nrow(x), hash = 0),
-    dplyr::tibble(col = 1:ncol(x), hash = 0), by='hash') %>%
+    dplyr::tibble(row = 1:n_row, hash = 0),
+    dplyr::tibble(col = 1:n_col, hash = 0), by='hash') %>%
     dplyr::select(row,col) -> ix
 
   if(isFALSE(directed))
@@ -176,16 +241,14 @@ el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = 
     nodes <- nodes_from_el(dat, 1:2)
   }
 
-  node_to_id <- node_to_id_map(nodes)
-
   if(isFALSE(drop_names))
     adj <- Matrix::sparseMatrix(
-      i = unlist(node_to_id[dat$source]), j = unlist(node_to_id[dat$target]),
+      i = match(dat$source,nodes), j = match(dat$target, nodes),
       x = dat$attr, dims = c(length(nodes), length(nodes)), dimnames = list(nodes, nodes)
     )
   if(isTRUE(drop_names))
     adj <- Matrix::sparseMatrix(
-      i = unlist(node_to_id[dat$source]), j = unlist(node_to_id[dat$target]),
+      i = match(dat$source,nodes), j = match(dat$target,nodes),
       x = dat$attr, dims = c(length(nodes), length(nodes))
     )
 
@@ -263,19 +326,16 @@ multi2weight <- function(el, select_cols = NULL, aggr_expression = NULL) {
     }
   }
 
-  dplyr::as_tibble(el) %>%
-    mutate(hash = apply(cbind(.data$source, .data$target), 1, paste, collapse = "_")) -> dat
+  dplyr::as_tibble(el) %>% mutate_at(c("source", "target"), as.character) -> dat
 
-  if (isFALSE(multiedge) && dat %>% count(.data$hash) %$% any(n > 1)) {
+  if (isFALSE(multiedge) && dat %>% count(.data$source, .data$target) %$% any(n > 1)) {
     stop('Multiedges detected. Set "multiedge=TRUE"')
   }
 
   if (isTRUE(multiedge)) {
     dat %>%
-      group_by(.data$hash) %>%
+      group_by(.data$source, .data$target) %>%
       summarise(
-        source = as.character(first(.data$source)),
-        target = as.character(first(.data$target)),
         attr = eval(aggr_expression)
       ) %>%
       select(.data$source, .data$target, .data$attr) -> dat

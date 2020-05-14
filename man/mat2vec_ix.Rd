@@ -2,26 +2,32 @@
 % Please edit documentation in R/matrixOperations.R
 \name{mat2vec_ix}
 \alias{mat2vec_ix}
-\title{Auxiliary function, gives mask for matrix for directed,
-undirected etc.}
+\title{Auxiliary function, gives mask for matrix for directed, undirected etc.}
 \usage{
-mat2vec_ix(x, directed, selfloops, arr.ind = FALSE)
+mat2vec_ix(x = NULL, directed = NULL, selfloops = NULL, arr.ind = FALSE)
 }
 \arguments{
-\item{x}{matrix}
+\item{x}{either a matrix, the number of nodes, or the vector containg the
+nodes}
 
-\item{directed}{a boolean argument specifying whether object is directed or not.}
+\item{directed}{a boolean argument specifying whether object is directed or
+not. When absent it is inferred from `x`.}
 
-\item{selfloops}{a boolean argument specifying whether the model should incorporate selfloops.}
+\item{selfloops}{a boolean argument specifying whether the model should
+incorporate selfloops. When absent it is inferred from `x`.}
 
-\item{arr.ind}{boolean, return vector of indices or tuple with array indices? defaults to FALSE}
+\item{arr.ind}{boolean, return vector of indices or tuple with array indices?
+defaults to FALSE}
 }
 \value{
 a boolean matrix that can be used to mask adjacency matrices.
 }
 \description{
-Auxiliary function, gives mask for matrix for directed,
-undirected etc.
+`x` can either be the matrix, the number of nodes or a vector of nodes. If x
+is a list, it is assumed that the first element of the list is the vector of
+row-nodes, and the second element the vector of column-nodes. If x is a
+numeric vector of length 2, it is assumed that x is the dimensions of the
+matrix.
 }
 \examples{
 el <- data.frame(from= c('a','b','b','c','d','d'),
@@ -29,4 +35,7 @@ el <- data.frame(from= c('a','b','b','c','d','d'),
                 attr= c( 12, 6, 12 , 6 , 6 , 6 ))
 adj <- el2adj(el)
 mat2vec_ix(adj, directed = TRUE, selfloops=FALSE)
+mat2vec_ix(adj)
+mat2vec_ix(x=nrow(adj), directed = TRUE, selfloops=FALSE)
+mat2vec_ix(x=rownames(adj), directed = TRUE, selfloops=FALSE)
 }

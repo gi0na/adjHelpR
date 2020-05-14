@@ -1,25 +1,3 @@
-#' Map node names to their index in a nodes vector
-#'
-#' Generate a map from node names to their index in a nodes vector This function
-#' return a named list whose elements are the indices of x named as the elements
-#' of x.
-#'
-#' @param x vector of names
-#'
-#' @return a named list
-#' @export
-#'
-#' @examples
-#' nodes <- c('a', 'b', 'c')
-#' node_to_id <- node_to_id_map(nodes)
-#' vec <- nodes[sample(3, 20, replace=TRUE)]
-#' ids <- unlist(node_to_id[vec])
-node_to_id_map <- function(x){
-  node_to_id <- as.list(1:length(x))
-  names(node_to_id) <- x
-  return(node_to_id)
-}
-
 #' Extract node names from an edgelist
 #'
 #' This function allows to extract the node names for an edgelist. When the
@@ -74,7 +52,7 @@ nodes_from_el <- function(el, select_cols = NULL){
   # if select_cols was not specified and
   if(!is.null(select_cols)){
     if(is.character(select_cols))
-      select_cols <- unlist(node_to_id_map(col_names)[select_cols])
+      select_cols <- match(select_cols, col_names)
     col_names[col_names %in% c('source','target')] <- 1:sum(col_names %in% c('source','target'))
     col_names[select_cols[1:2]] <- c('source','target')
     if(attr_cols & length(select_cols)>2){
