@@ -222,6 +222,9 @@ adj2el <- function(adj, directed = TRUE, names = NULL) {
 #' @param drop_names boolean, drop names from matrix and return a vector of
 #'   names together with the matrix. This option saves considerable memory when
 #'   dealing with graphs with long node names.
+#' @param directed boolean, optional parameter, if FALSE, forces to undirected
+#'   upper triangular adjacency matrix
+#' @param selfloops boolean, optional parameter, if ignores selfloops.
 #'
 #' @return the (weighted) adjacency matrix corresponding the edgelist passed. If
 #'   `drop_names` is TRUE, returns a list with the adjacency matrix and a vector
@@ -234,8 +237,12 @@ adj2el <- function(adj, directed = TRUE, names = NULL) {
 #'                 attr= c( 12, 6, 12 , 6 , 6 , 6 ))
 #' adj <- el2adj(el)
 #'
-el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = NULL, nodes = NULL, sparse = TRUE, drop_names = FALSE) {
+el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
+                   drop_names = FALSE, directed = NULL, selfloops = NULL) {
   dat <- .multi2weight(el = el, select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression)
+
+  if(isFALSE(selfloops))
+    dat %>% filter(.data$source!=.data$target) -> dat
 
   if (is.null(nodes)) {
     nodes <- nodes_from_el(dat, 1:2)
@@ -251,6 +258,9 @@ el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = 
       i = match(dat$source,nodes), j = match(dat$target,nodes),
       x = dat$attr, dims = c(length(nodes), length(nodes))
     )
+
+  if(isFALSE(directed))
+    adj <- methods::as(Matrix::t(adj) + adj, 'symmetricMatrix')
 
   if (isFALSE(sparse)) adj <- as.matrix(adj)
   if(isFALSE(drop_names)) return(adj)

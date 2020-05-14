@@ -11,7 +11,9 @@ el2adj(
   aggr_expression = NULL,
   nodes = NULL,
   sparse = TRUE,
-  drop_names = FALSE
+  drop_names = FALSE,
+  directed = NULL,
+  selfloops = NULL
 )
 }
 \arguments{
@@ -41,6 +43,11 @@ nodes should be included.}
 \item{drop_names}{boolean, drop names from matrix and return a vector of
 names together with the matrix. This option saves considerable memory when
 dealing with graphs with long node names.}
+
+\item{directed}{boolean, optional parameter, if FALSE, forces to undirected
+upper triangular adjacency matrix}
+
+\item{selfloops}{boolean, optional parameter, if ignores selfloops.}
 }
 \value{
 the (weighted) adjacency matrix corresponding the edgelist passed. If
