@@ -35,7 +35,7 @@ nodes_from_el <- function(el, select_cols = NULL){
 
 
 # return the columns corresponding to source, target and attr
-.select_cols <- function(col_names, select_cols, attr_cols){
+.select_cols <- function(col_names, select_cols, attr_cols, timeslice=FALSE){
   # check sizes of objects
   if ((!is.null(select_cols)) & length(select_cols) < 2) stop("select_cols have the wrong size")
 

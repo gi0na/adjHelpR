@@ -61,6 +61,7 @@ get_adjacency(
   drop_names = FALSE,
   directed = NULL,
   selfloops = NULL,
+  edgelist = NULL,
   ...
 )
 

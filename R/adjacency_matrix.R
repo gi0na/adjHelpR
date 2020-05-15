@@ -36,22 +36,51 @@ get_adjacency.tbl <- function(x, select_cols = NULL, multiedge = NULL, aggr_expr
 #' @export
 get_adjacency.data.frame <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                                      drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
-  get_adjacency(dplyr::as.tbl(x, "tbl"), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+  get_adjacency(dplyr::as.tbl(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
                 drop_names = drop_names, directed = directed, selfloops = selfloops, ...)
 }
 
 #' @rdname get_adjacency
 #' @export
 get_adjacency.matrix <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
-                                 drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
+                                 drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...){
 
-  y <- cbind(matrix(0, nrow = nrow(x), ncol=nrow(x)),x)
-  colnames(y) <- c(rownames(x),colnames(x))
-  y1 <- cbind(t(x),matrix(0, nrow = ncol(x), ncol=ncol(x)))
-  z <- rbind(y,y1)
-  if(isTRUE(sparse))
-    z <- methods::as(z,"dsCMatrix")
-  return(z)
+  if(is.null(edgelist)){
+    if(is.null(c(select_cols,multiedge,aggr_expression,nodes))){
+      if(ncol(x)==3 & ncol(x)<nrow(x)){
+        warning('Treating x as an edgelist. If x was an incidence matrix, set edgelist=FALSE.')
+        edgelist <- TRUE
+      } else{
+        edgelist <- FALSE
+      }
+    } else{
+      message('Treating x as an edgelist.')
+      edgelist <- TRUE
+    }
+  }
+
+  if(isTRUE(edgelist)){
+    z <- get_adjacency(as.data.frame(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+                       drop_names = drop_names, directed = directed, selfloops = selfloops, ...)
+    return(z)
+  }
+  if(isFALSE(edgelist)){
+    warning('Treating x as an incidence matrix. If x was an edgelist matrix, set edgelist=TRUE')
+    if(is.null(rownames(x))){
+      rownames(x) <- 1:nrow(x)
+    }
+    if(is.null(colnames(x))){
+      colnames(x) <- (nrow(x)+1):(nrow(x)+ncol(x))
+    }
+    y <- cbind(matrix(0, nrow = nrow(x), ncol=nrow(x)),x)
+    colnames(y) <- c(rownames(x),colnames(x))
+    y1 <- cbind(t(x),matrix(0, nrow = ncol(x), ncol=ncol(x)))
+    z <- rbind(y,y1)
+    if(isTRUE(sparse))
+      z <- methods::as(z,"dsCMatrix")
+    return(z)
+  }
+  stop('Wrong Format for x')
 }
 
 #' @rdname get_adjacency
@@ -59,6 +88,13 @@ get_adjacency.matrix <- function(x, select_cols = NULL, multiedge = NULL, aggr_e
 get_adjacency.dgTMatrix <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                                     drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
 
+  warning('Treating x as an incidence matrix.')
+  if(is.null(rownames(x))){
+    rownames(x) <- 1:nrow(x)
+  }
+  if(is.null(colnames(x))){
+    colnames(x) <- 1:ncol(x)
+  }
   y <- cbind(Matrix::Matrix(0, nrow = nrow(x), ncol=nrow(x)),x)
   colnames(y) <- c(rownames(x),colnames(x))
   y1 <- cbind(Matrix::t(x),Matrix::Matrix(0, nrow = ncol(x), ncol=ncol(x)))
@@ -89,7 +125,7 @@ get_adjacency.sparseMatrix <- function(x, select_cols = NULL, multiedge = NULL, 
 #' @export
 get_adjacency.default <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                                      drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
-  get_adjacency(methods::as(x, "tbl"), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+  get_adjacency(dplyr::as.tbl(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
                 drop_names = drop_names, directed = directed, selfloops = selfloops, ...)
 }
 
