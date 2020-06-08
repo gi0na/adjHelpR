@@ -42,6 +42,7 @@ nodes_from_el <- function(el, select_cols = NULL){
 
   # if select_cols is not specified and source and targets do not exist set them to col 1 and 2
   if(is.null(select_cols)){
+    col_names <- .map_colnames(col_names)
     if(!all(c('source','target') %in% col_names)){
       select_cols <- 1:2
       if(isTRUE(attr_cols))
@@ -49,16 +50,56 @@ nodes_from_el <- function(el, select_cols = NULL){
     }
   }
 
-  # if select_cols was not specified and
+  # if select_cols was specified and
   if(!is.null(select_cols)){
     if(is.character(select_cols))
       select_cols <- match(select_cols, col_names)
     col_names[col_names %in% c('source','target')] <- 1:sum(col_names %in% c('source','target'))
     col_names[select_cols[1:2]] <- c('source','target')
     if(attr_cols & length(select_cols)>2){
-      col_names[col_names %in% 'attr'] <- NA
+      col_names[col_names %in% 'attr'] <- 3
       col_names[select_cols[3]] <- 'attr'
     }
   }
   return(col_names)
 }
+
+# return the columns corresponding to source, target and attr
+.select_cols_temporal <- function(col_names, select_cols, attr_cols){
+  # check sizes of objects
+  if ((!is.null(select_cols)) & length(select_cols) < 3) stop("select_cols have the wrong size")
+
+
+  # if select_cols is not specified and source and targets do not exist set them to col 1 and 2
+  if(is.null(select_cols)){
+    col_names <- .map_colnames(col_names)
+    if(!all(c('timestamp','source','target') %in% col_names)){
+      select_cols <- 1:3
+      if(isTRUE(attr_cols))
+        select_cols <- c(select_cols,4)
+    }
+  }
+
+  # if select_cols was specified and
+  if(!is.null(select_cols)){
+    if(is.character(select_cols))
+      select_cols <- match(select_cols, col_names)
+    col_names[col_names %in% c('timestamp','source','target')] <- 1:sum(col_names %in% c('timestamp','source','target'))
+    col_names[select_cols[1:3]] <- c('timestamp','source','target')
+    if(attr_cols & length(select_cols)>3){
+      col_names[col_names %in% 'attr'] <- 4
+      col_names[select_cols[4]] <- 'attr'
+    }
+  }
+  return(col_names)
+}
+
+.map_colnames <- function(col_names){
+  col_names[!is.na(match(col_names, c('time','t')))] <- 'timestamp'
+  col_names[!is.na(match(col_names, c('from','i')))] <- 'source'
+  col_names[!is.na(match(col_names, c('to','j')))] <- 'target'
+  return(col_names)
+}
+
+
+
