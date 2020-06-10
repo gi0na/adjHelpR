@@ -33,13 +33,14 @@
 #'   `igraph_weighted` allows to generated weighted graphs.
 #' @param ... additional parameters passed to internal constructors. E.g., to
 #'   `get_adjacency`.
+#' @param ncores integer, number of cores to use. Defaults to 1.
 #'
 #' @return A tibble with two columns "network" and "time", where "network" is
 #'   the time-window and "time" the corresponding time at which the time-window
 #'   starts.
 #' @export
 #' @author CZ, GC
-#' @examples
+#'
 get_rolling_windows <- function(el,
                                 window_size,
                                 step_size = NULL,
@@ -48,7 +49,8 @@ get_rolling_windows <- function(el,
                                 out_format = 'edgelist',
                                 flush = "earliest",
                                 select_cols = NULL,
-                                as_date=NULL,
+                                as_date = NULL,
+                                ncores = NULL,
                                 ...) {
   # Builds rolling multiedge time-window networks from the edge_list.
   #
@@ -121,34 +123,36 @@ get_rolling_windows <- function(el,
   }
 
   # Create corresponding networks
-  windows <- list()
-  for (i in seq_along(starting_times)) {
-    lower <- starting_times[i]
-    upper <- ending_times[i]
-    if(grepl('edge', out_format)){
-      el %>%
-        .el2slice(start_time = lower, end_time = upper, index = FALSE) ->
-        curr_window
-    }
-    if(grepl('adj', out_format)){
-      el %>%
-        .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
-        get_adjacency(select_cols = select_cols, ...) ->
-        curr_window
-    }
-    if(grepl('igraph', out_format)){
-      weighted <- NULL
-      if(grepl('weight', out_format)) weighted <- TRUE
-      if(requireNamespace("igraph", quietly = TRUE)){
+  if(is.null(ncores)) ncores <- 1
+  windows <-
+  # for (i in seq_along(starting_times)) {
+    pbmcapply::pbmclapply(X = seq_along(starting_times), FUN = function(i){
+      lower <- starting_times[i]
+      upper <- ending_times[i]
+      if(grepl('edge', out_format)){
         el %>%
-          .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
-          get_adjacency(select_cols = select_cols, ...) %>%
-          igraph::graph_from_adjacency_matrix(weighted = weighted) ->
+          .el2slice(start_time = lower, end_time = upper, index = FALSE) ->
           curr_window
       }
-    }
-    windows <- append(windows, list(curr_window))
-  }
+      if(grepl('adj', out_format)){
+        el %>%
+          .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
+          get_adjacency(select_cols = select_cols, multiedge = TRUE, ...) ->
+          curr_window
+      }
+      if(grepl('igraph', out_format)){
+        weighted <- NULL
+        if(grepl('weight', out_format)) weighted <- TRUE
+        if(requireNamespace("igraph", quietly = TRUE)){
+          el %>%
+            .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
+            get_adjacency(select_cols = select_cols, multiedge = TRUE, ...) %>%
+            igraph::graph_from_adjacency_matrix(weighted = weighted) ->
+            curr_window
+        }
+      }
+      return(curr_window)
+    }, mc.cores = ncores)
 
   # Return
   return(dplyr::tibble("time" = starting_times, "network" = windows))
@@ -156,19 +160,21 @@ get_rolling_windows <- function(el,
 
 #' Filter edgelist for a time slice
 #'
-#' @param el edgelist
-#' @param select_cols
-#' @param start_time
-#' @param end_time
-#' @param duration
-#' @param index
-#' @param as_date
-#' @param attr_cols
+#' @inheritParams get_adjacency
+#' @param start_time the timestamp a which start the timewindow slice. It can be an integer defining either the index of the start point or the unit of time at which to cut, or a datestring string.
+#' @param end_time (optional) the timestamp a which to end the timewindow slice. It can be an integer defining either the index of the end point or the unit of time at which to cut, or a datestring string.
+#' @param duration (optional) the duration of the timewindow. If `end_time` is not provided it defines how long after `start_time` the window should be cut.
+#' @param index boolean, set to TRUE if start_time and end_time are supplied as indices. Defaults to FALSE.
+#' @param as_date (optional) boolean, are the timestamps supplied as datestrings?
 #'
-#' @return
+#' @return a tibble with the edgelist cut such that timestamps are between `start_time` and `end_time`
 #' @export
 #'
 #' @examples
+#' el <- data.frame(from= c('a','b','b','c','d','d'),
+#'                 to  = c('b','c','d','a','b','a'),
+#'                 t = 1:6 )
+#' slice <- get_slice_edgelist(el, select_cols = c(3,1,2), start_time = 2, duration = 3)
 get_slice_edgelist <- function(el, select_cols = NULL, start_time, end_time=NULL, duration=NULL, index=FALSE, as_date=NULL){
   if (ncol(el) < 3) stop("Not enough columns.")
 

@@ -14,6 +14,7 @@ get_rolling_windows(
   flush = "earliest",
   select_cols = NULL,
   as_date = NULL,
+  ncores = NULL,
   ...
 )
 }
@@ -53,6 +54,8 @@ are `c(timestamp,source,target)`.}
 
 \item{as_date}{(optional) boolean identifying if timestamps are in date
 formats, or unix seconds.}
+
+\item{ncores}{integer, number of cores to use. Defaults to 1.}
 
 \item{...}{additional parameters passed to internal constructors. E.g., to
 `get_adjacency`.}

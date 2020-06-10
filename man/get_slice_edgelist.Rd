@@ -15,13 +15,32 @@ get_slice_edgelist(
 )
 }
 \arguments{
-\item{el}{edgelist}
+\item{select_cols}{optional vector of 3 (2 for multi-graphs) elements
+specifying which columns are the source,target, and attributes from which
+building the graph. Otherwise Column 1 is assumed to be the source, column
+2 the target, column 3 the attribute. In the case of multi-graphs, the
+third element is not needed and the number of edges between each pair of
+vertices is computed according to '\code{aggr_expression}'.}
 
-\item{attr_cols}{}
+\item{start_time}{the timestamp a which start the timewindow slice. It can be an integer defining either the index of the start point or the unit of time at which to cut, or a datestring string.}
+
+\item{end_time}{(optional) the timestamp a which to end the timewindow slice. It can be an integer defining either the index of the end point or the unit of time at which to cut, or a datestring string.}
+
+\item{duration}{(optional) the duration of the timewindow. If `end_time` is not provided it defines how long after `start_time` the window should be cut.}
+
+\item{index}{boolean, set to TRUE if start_time and end_time are supplied as indices. Defaults to FALSE.}
+
+\item{as_date}{(optional) boolean, are the timestamps supplied as datestrings?}
 }
 \value{
-
+a tibble with the edgelist cut such that timestamps are between `start_time` and `end_time`
 }
 \description{
 Filter edgelist for a time slice
+}
+\examples{
+el <- data.frame(from= c('a','b','b','c','d','d'),
+                to  = c('b','c','d','a','b','a'),
+                t = 1:6 )
+slice <- get_slice_edgelist(el, select_cols = c(3,1,2), start_time = 2, duration = 3)
 }
