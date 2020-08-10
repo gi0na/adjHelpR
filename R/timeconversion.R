@@ -14,10 +14,10 @@
 #' @export
 #'
 #' @examples
-#'       >>> UnixToDatestring(0)
-#'       1970-01-01
-#'       >>> UnixToDatestring(86400)
-#'       1970-01-02
+#'       unix_to_datestring(0)
+#'       # 1970-01-01
+#'       unix_to_datestring(86400)
+#'       # 1970-01-02
 unix_to_datestring <- function(unix_timestamp, out_format = "%Y-%m-%d"){
   # Converts the given unix_timestamp into a date-string.
   #
@@ -57,10 +57,10 @@ unix_timestamp %>%
 #' @export
 #'
 #' @examples
-#'       >>> DatestringToUnix("1970-01-01")
-#'       0
-#'       >>> DatestringToUnix("1970-01-02")
-#'       86400
+#'       datestring_to_unix("1970-01-01")
+#'       # 0
+#'       datestring_to_unix("1970-01-02")
+#'       # 86400
 datestring_to_unix <- function(datestring, in_format = "%Y-%m-%d"){
   # Converts the given datestring into a unix-timestamp.
   #

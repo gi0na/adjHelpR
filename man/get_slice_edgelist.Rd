@@ -15,6 +15,8 @@ get_slice_edgelist(
 )
 }
 \arguments{
+\item{el}{the edgelist from which to compute the time slices}
+
 \item{select_cols}{optional vector of 3 (2 for multi-graphs) elements
 specifying which columns are the source,target, and attributes from which
 building the graph. Otherwise Column 1 is assumed to be the source, column

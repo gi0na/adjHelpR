@@ -20,8 +20,8 @@ Integer representing the date as a unix_timestamp.
 Converts the given datestring into a unix-timestamp.
 }
 \examples{
-      >>> DatestringToUnix("1970-01-01")
-      0
-      >>> DatestringToUnix("1970-01-02")
-      86400
+      datestring_to_unix("1970-01-01")
+      # 0
+      datestring_to_unix("1970-01-02")
+      # 86400
 }

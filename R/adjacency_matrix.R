@@ -1,11 +1,16 @@
 #' Compute the adjacency matrix from various types of objects.
 #'
-#' If `x` is a tibble or a dataframe, `get_adjacency` assumes that it has been passed an edgelist.
-#' If `x` is a matrix, `get_adjacency` assumes that it has been passed an incidence matrix and constructs the corresponding adjacency matrix.
-#' If `x` is a different object, `get_adjacency` uses the appropriate method if it exists. Otherwise it tries to coerce `x` to a `data.frame`.
+#' If `x` is a tibble or a dataframe, `get_adjacency` assumes that it has been
+#' passed an edgelist. If `x` is a matrix, `get_adjacency` assumes that it has
+#' been passed an incidence matrix and constructs the corresponding adjacency
+#' matrix. If `x` is a different object, `get_adjacency` uses the appropriate
+#' method if it exists. Otherwise it tries to coerce `x` to a `data.frame`.
 #'
 #' @param x object from which generating the adjacency matrix
 #' @inheritParams el2adj
+#' @param edgelist optional boolean. If `x` is a matrix, should treat `x` as an
+#'   edgelist? If not provided, tries to infer if `x` is an edgelist or an
+#'   incedence matrix from its shape.
 #' @param ... additional parameters to and from the main method. Currently not
 #'   used.
 #'
@@ -19,14 +24,14 @@
 #' adj <- get_adjacency(el)
 #'
 get_adjacency <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
-                          drop_names = FALSE, directed = NULL, selfloops = NULL, ...) {
+                          drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...) {
   UseMethod("get_adjacency")
 }
 
 #' @rdname get_adjacency
 #' @export
 get_adjacency.tbl <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
-                              drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
+                              drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...){
   if(is.null(multiedge)) multiedge <- FALSE
   el2adj(el = x, select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
          drop_names = drop_names, directed = directed, selfloops = selfloops)
@@ -35,8 +40,8 @@ get_adjacency.tbl <- function(x, select_cols = NULL, multiedge = NULL, aggr_expr
 #' @rdname get_adjacency
 #' @export
 get_adjacency.data.frame <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
-                                     drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
-  get_adjacency(dplyr::as.tbl(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+                                     drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...){
+  get_adjacency(dplyr::as_tibble(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
                 drop_names = drop_names, directed = directed, selfloops = selfloops, ...)
 }
 
@@ -125,7 +130,7 @@ get_adjacency.sparseMatrix <- function(x, select_cols = NULL, multiedge = NULL, 
 #' @export
 get_adjacency.default <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                                      drop_names = FALSE, directed = NULL, selfloops = NULL, ...){
-  get_adjacency(dplyr::as.tbl(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+  get_adjacency(dplyr::as_tibble(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
                 drop_names = drop_names, directed = directed, selfloops = selfloops, ...)
 }
 

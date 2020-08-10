@@ -17,9 +17,9 @@
 #' @param end_time (optional) If given, rolling time-windows are created until
 #'   they exceed this value. Else, this value defaults to max(edgelist$time).
 #' @param flush (optional) If "earliest" or unset, the first time-window starts
-#'   at `earliest`, possibly excluding an incomplete time-window at `latest`. If
-#'   "latest", the last time-window ends at `latest`, and possibly an incomplete
-#'   time-window at earliest is discarded.
+#'   at `start_time`, possibly excluding an incomplete time-window at `end_time`. If
+#'   "latest", the last time-window ends at `end_time`, and possibly an incomplete
+#'   time-window at start_time is discarded.
 #' @param select_cols an (optional) vector specifying which columns to use. The
 #'   first entry should contain either the name or index for the timestamp
 #'   column, the second for the sources of links, the third for the targets of
@@ -63,15 +63,15 @@ get_rolling_windows <- function(el,
   #     step_size: The shift between consecutive time-window network given as
   #         the number of seconds.
   #     directed: Whether to create directed or undirected edges.
-  #     earliest: (optional) If given, the rolling time-windows are built
+  #     start_time: (optional) If given, the rolling time-windows are built
   #         starting at this timestamp. Else, they are started at
   #         min(edgelist$time).
-  #     latest: (optional) If given, rolling time-windows are created until they
+  #     end_time: (optional) If given, rolling time-windows are created until they
   #         exceed this value. Else, this value defaults to max(edgelist$time).
   #     flush: (optional) If "earliest" or unset, the first time-window starts at
-  #         `earliest`, possibly excluding an incomplete time-window at `latest`.
-  #         If "latest", the last time-window ends at `latest`, and possibly an
-  #         incomplete time-window at earliest is discarded.
+  #         `start_time`, possibly excluding an incomplete time-window at `end_time`.
+  #         If "latest", the last time-window ends at `end_time`, and possibly an
+  #         incomplete time-window at start_time is discarded.
   #
   # Returns:
   #     A tibble with two columns "network" and "time", where "network"
@@ -97,14 +97,14 @@ get_rolling_windows <- function(el,
   if(isTRUE(as_date)){
     date_format <- detect_date_format(el$timestamp[1])
     if(is.null(date_format)) stop('Wrong timestamp format.')
-    el %>% mutate(timestamp = datestring_to_Unix(datestring = timestamp, in_format = date_format))
+    el %>% mutate(timestamp = datestring_to_unix(datestring = .data$timestamp, in_format = date_format))
     date_format <- detect_date_format(start_time)
     if(is.null(date_format)) stop('Wrong start_time format.')
-    start_time <- datestring_to_Unix(datestring = start_time, in_format = date_format)
+    start_time <- datestring_to_unix(datestring = start_time, in_format = date_format)
     if(!is.null(end_time)){
       date_format <- detect_date_format(end_time)
       if(is.null(date_format)) stop('Wrong end_time format.')
-      end_time <- datestring_to_Unix(datestring = end_time, in_format = date_format)
+      end_time <- datestring_to_unix(datestring = end_time, in_format = date_format)
     }
   }
 
@@ -114,7 +114,7 @@ get_rolling_windows <- function(el,
     starting_times <- seq(start_time, end_time - window_size, by = step_size)
     ending_times <- starting_times + window_size
   } else if (flush == "latest") {
-    seq(latest - window_size, earliest, by = -step_size) %>%
+    seq(end_time - window_size, start_time, by = -step_size) %>%
       rev() ->
       starting_times
     ending_times <- starting_times + window_size
@@ -161,6 +161,7 @@ get_rolling_windows <- function(el,
 #' Filter edgelist for a time slice
 #'
 #' @inheritParams get_adjacency
+#' @param el the edgelist from which to compute the time slices
 #' @param start_time the timestamp a which start the timewindow slice. It can be an integer defining either the index of the start point or the unit of time at which to cut, or a datestring string.
 #' @param end_time (optional) the timestamp a which to end the timewindow slice. It can be an integer defining either the index of the end point or the unit of time at which to cut, or a datestring string.
 #' @param duration (optional) the duration of the timewindow. If `end_time` is not provided it defines how long after `start_time` the window should be cut.
@@ -190,14 +191,14 @@ get_slice_edgelist <- function(el, select_cols = NULL, start_time, end_time=NULL
   if(isTRUE(as_date)){
     date_format <- detect_date_format(el$timestamp[1])
     if(is.null(date_format)) stop('Wrong timestamp format.')
-    el %>% mutate(timestamp = datestring_to_Unix(datestring = timestamp, in_format = date_format))
+    el %>% mutate(timestamp = datestring_to_unix(datestring = .data$timestamp, in_format = date_format))
     date_format <- detect_date_format(start_time)
     if(is.null(date_format)) stop('Wrong start_time format.')
-    start_time <- datestring_to_Unix(datestring = start_time, in_format = date_format)
+    start_time <- datestring_to_unix(datestring = start_time, in_format = date_format)
     if(!is.null(end_time)){
       date_format <- detect_date_format(end_time)
       if(is.null(date_format)) stop('Wrong end_time format.')
-      end_time <- datestring_to_Unix(datestring = end_time, in_format = date_format)
+      end_time <- datestring_to_unix(datestring = end_time, in_format = date_format)
     }
   }
 
@@ -214,7 +215,7 @@ get_slice_edgelist <- function(el, select_cols = NULL, start_time, end_time=NULL
 
   if(!index){
     el %>%
-      dplyr::filter(start_time <= timestamp & timestamp < end_time) ->
+      dplyr::filter(start_time <= .data$timestamp & .data$timestamp < end_time) ->
       curr_slice
   } else{
     start_index <- start_time

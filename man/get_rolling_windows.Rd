@@ -42,9 +42,9 @@ igraph graphs. Defaults to 'edgelist'. In the case of igraph graphs, adding
 `igraph_weighted` allows to generated weighted graphs.}
 
 \item{flush}{(optional) If "earliest" or unset, the first time-window starts
-at `earliest`, possibly excluding an incomplete time-window at `latest`. If
-"latest", the last time-window ends at `latest`, and possibly an incomplete
-time-window at earliest is discarded.}
+at `start_time`, possibly excluding an incomplete time-window at `end_time`. If
+"latest", the last time-window ends at `end_time`, and possibly an incomplete
+time-window at start_time is discarded.}
 
 \item{select_cols}{an (optional) vector specifying which columns to use. The
 first entry should contain either the name or index for the timestamp

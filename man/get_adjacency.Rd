@@ -22,6 +22,7 @@ get_adjacency(
   drop_names = FALSE,
   directed = NULL,
   selfloops = NULL,
+  edgelist = NULL,
   ...
 )
 
@@ -35,6 +36,7 @@ get_adjacency(
   drop_names = FALSE,
   directed = NULL,
   selfloops = NULL,
+  edgelist = NULL,
   ...
 )
 
@@ -48,6 +50,7 @@ get_adjacency(
   drop_names = FALSE,
   directed = NULL,
   selfloops = NULL,
+  edgelist = NULL,
   ...
 )
 
@@ -163,6 +166,10 @@ upper triangular adjacency matrix}
 
 \item{selfloops}{boolean, optional parameter, if ignores selfloops.}
 
+\item{edgelist}{optional boolean. If `x` is a matrix, should treat `x` as an
+edgelist? If not provided, tries to infer if `x` is an edgelist or an
+incedence matrix from its shape.}
+
 \item{...}{additional parameters to and from the main method. Currently not
 used.}
 }
@@ -170,9 +177,11 @@ used.}
 A transition matrix in the same format of `adj`.
 }
 \description{
-If `x` is a tibble or a dataframe, `get_adjacency` assumes that it has been passed an edgelist.
-If `x` is a matrix, `get_adjacency` assumes that it has been passed an incidence matrix and constructs the corresponding adjacency matrix.
-If `x` is a different object, `get_adjacency` uses the appropriate method if it exists. Otherwise it tries to coerce `x` to a `data.frame`.
+If `x` is a tibble or a dataframe, `get_adjacency` assumes that it has been
+passed an edgelist. If `x` is a matrix, `get_adjacency` assumes that it has
+been passed an incidence matrix and constructs the corresponding adjacency
+matrix. If `x` is a different object, `get_adjacency` uses the appropriate
+method if it exists. Otherwise it tries to coerce `x` to a `data.frame`.
 }
 \examples{
 el <- data.frame(from= c('a','b','b','c','d','d'),

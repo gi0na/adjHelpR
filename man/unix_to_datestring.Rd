@@ -21,8 +21,8 @@ String representing the date corresponding to the unix_timestamp
 Converts the given unix_timestamp into a date-string.
 }
 \examples{
-      >>> UnixToDatestring(0)
-      1970-01-01
-      >>> UnixToDatestring(86400)
-      1970-01-02
+      unix_to_datestring(0)
+      # 1970-01-01
+      unix_to_datestring(86400)
+      # 1970-01-02
 }
