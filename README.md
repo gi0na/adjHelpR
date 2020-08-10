@@ -6,5 +6,5 @@ It exploits `dplyr` and `tibble`s to deal efficiently with large edgelists, and 
 
 ```
 # Install the development version from GitHub:
-devtools::install_github("gi0na/adjConvertR")
+devtools::install_github("gi0na/adjHelpR")
 ```
