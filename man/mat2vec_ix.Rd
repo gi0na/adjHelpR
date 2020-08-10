@@ -7,7 +7,7 @@
 mat2vec_ix(x = NULL, directed = NULL, selfloops = NULL, arr.ind = FALSE)
 }
 \arguments{
-\item{x}{either a matrix, the number of nodes, or the vector containg the
+\item{x}{either a matrix, the number of nodes, or the vector containing the
 nodes}
 
 \item{directed}{a boolean argument specifying whether object is directed or

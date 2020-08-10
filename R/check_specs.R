@@ -2,7 +2,7 @@
 #'
 #' This method allows different adjacency matrix classes to be checked.
 #'
-#' @param object matrix to be analysed. Different classes are allowed.
+#' @param object matrix to be analyzed. Different classes are allowed.
 #' @param ... additional parameters to and from internal functions, currently
 #'   not used.
 #'

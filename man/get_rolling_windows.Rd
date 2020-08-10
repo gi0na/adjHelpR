@@ -49,7 +49,7 @@ time-window at start_time is discarded.}
 \item{select_cols}{an (optional) vector specifying which columns to use. The
 first entry should contain either the name or index for the timestamp
 column, the second for the sources of links, the third for the targets of
-links. When not passed, it will be assumed that the first three colummns
+links. When not passed, it will be assumed that the first three columns
 are `c(timestamp,source,target)`.}
 
 \item{as_date}{(optional) boolean identifying if timestamps are in date

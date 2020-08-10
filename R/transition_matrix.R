@@ -1,6 +1,6 @@
 #' Compute a transition matrix from an adjacency matrix.
 #'
-#' This method take an adjacency matric (dense or sparse), and returns the
+#' This method take an adjacency matrix (dense or sparse), and returns the
 #' corresponding transition matrix in the same format. If the optional argument
 #' `directed` is specified to be FALSE, then before computing the transition
 #' matrix the adjacency matrix is forced be symmetric.

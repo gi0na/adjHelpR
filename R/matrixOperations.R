@@ -6,7 +6,7 @@
 #' numeric vector of length 2, it is assumed that x is the dimensions of the
 #' matrix.
 #'
-#' @param x either a matrix, the number of nodes, or the vector containg the
+#' @param x either a matrix, the number of nodes, or the vector containing the
 #'   nodes
 #' @param directed  a boolean argument specifying whether object is directed or
 #'   not. When absent it is inferred from `x`.

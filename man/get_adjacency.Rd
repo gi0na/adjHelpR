@@ -168,7 +168,7 @@ upper triangular adjacency matrix}
 
 \item{edgelist}{optional boolean. If `x` is a matrix, should treat `x` as an
 edgelist? If not provided, tries to infer if `x` is an edgelist or an
-incedence matrix from its shape.}
+incidence matrix from its shape.}
 
 \item{...}{additional parameters to and from the main method. Currently not
 used.}

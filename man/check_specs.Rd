@@ -22,7 +22,7 @@ check_specs(object, ...)
 \method{check_specs}{default}(object, ...)
 }
 \arguments{
-\item{object}{matrix to be analysed. Different classes are allowed.}
+\item{object}{matrix to be analyzed. Different classes are allowed.}
 
 \item{...}{additional parameters to and from internal functions, currently
 not used.}
