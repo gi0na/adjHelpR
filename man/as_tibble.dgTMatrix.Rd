@@ -4,9 +4,9 @@
 \alias{as_tibble.dgTMatrix}
 \alias{as_tibble.dgCMatrix}
 \alias{as_tibble.sparseMatrix}
-\title{Method to convert `Matrix` sparse matrices to `tibble`s
-Method for `as_tibble` to coerce sparse matrix objects
-to a `tibble`}
+\title{Method to convert 'Matrix' sparse matrices to 'tibble's
+Method for 'as_tibble' to coerce sparse matrix objects
+to a 'tibble'}
 \usage{
 \method{as_tibble}{dgTMatrix}(x, ...)
 
@@ -20,7 +20,7 @@ to a `tibble`}
 \item{...}{Extra arguments, not used}
 }
 \description{
-Method to convert `Matrix` sparse matrices to `tibble`s
-Method for `as_tibble` to coerce sparse matrix objects
-to a `tibble`
+Method to convert 'Matrix' sparse matrices to 'tibble's
+Method for 'as_tibble' to coerce sparse matrix objects
+to a 'tibble'
 }

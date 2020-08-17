@@ -1,6 +1,6 @@
-#' Method to convert `Matrix` sparse matrices to `tibble`s
-#' Method for `as_tibble` to coerce sparse matrix objects
-#' to a `tibble`
+#' Method to convert 'Matrix' sparse matrices to 'tibble's
+#' Method for 'as_tibble' to coerce sparse matrix objects
+#' to a 'tibble'
 #'
 #' @param x A Matrix object
 #' @param ... Extra arguments, not used
