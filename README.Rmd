@@ -52,3 +52,16 @@ el <- data.frame(from= c('a','b','b','c','d','d'),
                         .name_repair='minimal'))
 (adj <- get_adjacency(el_unweighted, multiedge = TRUE))
 ```
+
+# Acknowledgements
+The research and development behind `adjHelpR` is performed at the Chair of Systems Design, ETH Zürich.
+
+# Contributors
+
+[Giona Casiraghi](http://giona.info)
+
+
+# Copyright
+`adjHelpR` is licensed under the [GNU Affero General Public License](https://choosealicense.com/licenses/agpl-3.0/).
+
+(c) Copyright ETH Zürich, 2019-2020
