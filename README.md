@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.com/gi0na/adjHelpR.svg?branch=master)](https://travis-ci.com/gi0na/adjHelpR)
 <!-- badges: end -->
 
 The goal of adjHelpR is to provide tools to generate adjacency matrices
@@ -88,4 +90,4 @@ of Systems Design, ETH Zürich.
 `adjHelpR` is licensed under the [GNU Affero General Public
 License](https://choosealicense.com/licenses/agpl-3.0/).
 
-(c)  Copyright ETH Zürich, 2019-2020
+\(c\) Copyright ETH Zürich, 2019-2020
