@@ -83,7 +83,8 @@ of Systems Design, ETH Zürich.
 
 # Contributors
 
-[Giona Casiraghi](http://giona.info)
+[Giona Casiraghi](http://giona.info) [Christian
+Zingg](https://www.sg.ethz.ch/team/people/czingg/)
 
 # Copyright
 

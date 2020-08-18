@@ -60,6 +60,7 @@ The research and development behind `adjHelpR` is performed at the Chair of Syst
 # Contributors
 
 [Giona Casiraghi](http://giona.info)
+[Christian Zingg](https://www.sg.ethz.ch/team/people/czingg/)
 
 
 # Copyright
