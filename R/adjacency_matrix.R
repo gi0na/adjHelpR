@@ -33,7 +33,7 @@ get_adjacency <- function(x, select_cols = NULL, multiedge = NULL, aggr_expressi
 get_adjacency.tbl <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                               drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...){
   if(is.null(multiedge)) multiedge <- FALSE
-  el2adj(el = x, select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+  el2adj(edge.list = x, select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
          drop_names = drop_names, directed = directed, selfloops = selfloops)
 }
 

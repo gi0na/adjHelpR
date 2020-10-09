@@ -5,7 +5,7 @@
 \title{Filter edgelist for a time slice}
 \usage{
 get_slice_edgelist(
-  el,
+  edge.list,
   select_cols = NULL,
   start_time,
   end_time = NULL,
@@ -15,7 +15,7 @@ get_slice_edgelist(
 )
 }
 \arguments{
-\item{el}{the edgelist from which to compute the time slices}
+\item{edge.list}{the edgelist from which to compute the time slices}
 
 \item{select_cols}{optional vector of 3 (2 for multi-graphs) elements
 specifying which columns are the source,target, and attributes from which
@@ -44,5 +44,5 @@ Filter edgelist for a time slice
 el <- data.frame(from= c('a','b','b','c','d','d'),
                 to  = c('b','c','d','a','b','a'),
                 t = 1:6 )
-slice <- get_slice_edgelist(el, select_cols = c(3,1,2), start_time = 2, duration = 3)
+slice <- get_slice_edgelist(el, select_cols = 1:3, start_time = 2, duration = 3)
 }

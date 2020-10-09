@@ -1,0 +1,97 @@
+---
+title: "Create and Plot Time Unfolded Graphs"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Create and Plot Time Unfolded Graphs}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(dplyr)
+library(adjHelpR)
+library(ggraph)
+```
+
+# Get the time-stamped edge list
+
+The first step is to load a time-stamped edge list from which to generate the time-unfolded graph.
+Let's start from a small synthetic example.
+```{r synt edgelist}
+el <- tibble(
+ ts   = c( 1,  1,    2,  2,  2,     3,  3,  3,      4,  4,  4,      6),
+ from = c('A','B',  'A','B','B',   'A','C','C',    'A','B','C',    'D'),
+ to   = c('C','C',  'C','C','D',   'C','D','E',    'C','C','E',    'E')
+ )
+el
+```
+
+The edge list should contain at least 3 column: the edge source, the edge targets, and the timestamps.
+If you simply want to plot the time-unfolded graph from this edge list, run simply the `get_unfolded_plot` function.
+The function takes as option the direction in which you the graph to unfold. Set `vertical` to TRUE for a vertical plot, and to FALSE otherwise.
+
+```{r plot}
+get_unfolded_plot(edge.list = el, select_cols = c(2:3,1))
+```
+Note that we had to set the option `select_cols`. The function assumes that your edge.list takes the form ('source', 'target','timestamps'). Since the edge list we have passed has a different order, we pass to the function the positions of these 3 columns, i.e., 2,3,1, because the first one contains the timetamps.
+
+# More control
+
+Often, we are not satisfied with the default plot, or we are interested in the time-unfolded adjacency matrix to perform further operations.
+If our aim is the latter, we can use the function `get_unfolded_adjacency`.
+
+```{r unfolded_adjacency}
+get_unfolded_adjacency(edge.list = el, select_cols = c(2:3,1), vertical = FALSE, sparse = TRUE)
+```
+The function returns a square matrix with \(n\) times \(T\) rows, where \(n\) is the number of nodes in the edge list (or that have been passed to the function via the `nodes` argument), and \(T\) is the total length of timesteps.
+An edge at time \(t\) in the edge list, from \(i\) to \(j\), is then translated as an edge from the instance \(i_{t-1}\) of node \(i\), to the instance \(j_t\) of node \(j\).
+
+If we want to plot the time-unfolded graph with full control, we can the use the time-unfolded adjacency matrix constructed as above.
+However, it is often sufficient to start from a `ggraph` layout object which assigns the nodes of the matrix on a grid, and then add custom modifications.
+The function `get_unfolded_layout` allows to do exactly so.
+```{r unfoldlayout}
+lyt <- get_unfolded_layout(edge.list = el, select_cols = c(2:3,1), vertical = TRUE)
+lyt
+```
+We can then proceed plotting the layout with our chosen specs. By passing the node labels in our preferred order we ensure the correct ordering of the nodes. For example, here we can plot from E to A
+```{r plotlayout}
+# get the nodes' labels from the edge list
+node.labels <- sort(nodes_from_el(edge.list = el, select_cols = 2:3), decreasing = TRUE)
+lyt <- get_unfolded_layout(edge.list = el, select_cols = c(2:3,1), vertical = TRUE, nodes = node.labels)
+
+# generate the plot
+lyt %>%
+  # create the graph
+    ggraph() +
+  # add edges with arrows
+    geom_edge_link(width = grid::unit(0.5, 'mm'),
+                  arrow = arrow(length = grid::unit(2.5, 'mm'), type = 'closed'),
+                  end_cap = circle(3, 'mm'),
+                  start_cap = circle(3, 'mm'),
+                  color='gray50') +
+  # add nodes
+    geom_node_point(size=5) +
+  # add timestamps' labels on the right
+    geom_node_text(aes(
+      label=ifelse(gsub('_.*', '', name)==node.labels[1],
+                   gsub(paste0(node.labels[1],'_'), '', name),
+                   NA)),
+      nudge_x = - .6,
+      size=5
+    ) +
+    # add nodes' names labels at the top
+    geom_node_text(aes(
+      label=ifelse(gsub('.*_', '', name)==(min(el$ts)-1), gsub('_.*', '', name), NA)),
+      nudge_y = 0.6,
+      size=5
+    ) +
+    coord_fixed(clip='off') + theme_graph() +
+    theme(legend.position = "none")
+```

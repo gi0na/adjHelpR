@@ -43,7 +43,7 @@ adj2el <- function(adj, directed = TRUE, names = NULL) {
 
 #' Maps edgelist to adjacency matrix
 #'
-#' @param el dataframe containing a (weighted) edgelist.
+#' @param edge.list dataframe containing a (weighted) edgelist.
 #' @param nodes optional vector containing all node names in case disconnected
 #'   nodes should be included.
 #' @param select_cols optional vector of 3 (2 for multi-graphs) elements
@@ -55,7 +55,7 @@ adj2el <- function(adj, directed = TRUE, names = NULL) {
 #' @param multiedge boolean, are there multiple edges? defaults to FALSE.
 #' @param aggr_expression string, the expression used to compute the aggregated
 #'   value in the adjacency matrix in the presence of multiedges. It defaults to
-#'   '\code{dplyr::n()}'. If `el` contains other columns such as `weight`,
+#'   '\code{dplyr::n()}'. If `edge.list` contains other columns such as `weight`,
 #'   examples of `aggr_expression` could be `"mean(weight)"` to report the
 #'   average of the `weight` column of the multiedges, `"min(weight)"` to report
 #'   the minimum of the `weight` column of the multiedges.
@@ -78,9 +78,9 @@ adj2el <- function(adj, directed = TRUE, names = NULL) {
 #'                 attr= c( 12, 6, 12 , 6 , 6 , 6 ))
 #' adj <- el2adj(el)
 #'
-el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
+el2adj <- function(edge.list, select_cols = NULL, multiedge = FALSE, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                    drop_names = FALSE, directed = NULL, selfloops = NULL) {
-  dat <- .multi2weight(el = el, select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression)
+  dat <- .multi2weight(edge.list = edge.list, select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression)
 
   if(isFALSE(selfloops))
     dat %>% filter(.data$source!=.data$target) -> dat
@@ -88,7 +88,7 @@ el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = 
   if (is.null(nodes)) {
     nodes <- nodes_from_el(dat, 1:2)
   }
-
+# TODO: add subset for nodes if nodes are not all
   if(isFALSE(drop_names))
     adj <- Matrix::sparseMatrix(
       i = match(dat$source,nodes), j = match(dat$target, nodes),
@@ -149,24 +149,24 @@ el2adj <- function(el, select_cols = NULL, multiedge = FALSE, aggr_expression = 
 #' # edgelist with all() of attr2
 #' multi2weight(el, aggr_expression='all(attr2)')
 #'
-multi2weight <- function(el, select_cols = NULL, aggr_expression = NULL) {
-  .multi2weight(el = el, select_cols = select_cols, multiedge = TRUE, aggr_expression = aggr_expression)
+multi2weight <- function(edge.list, select_cols = NULL, aggr_expression = NULL) {
+  .multi2weight(edge.list = edge.list, select_cols = select_cols, multiedge = TRUE, aggr_expression = aggr_expression)
 }
 
 # internal function to convert multiedge edgelists to weighted edge lists
-.multi2weight <- function(el, select_cols, multiedge, aggr_expression) {
-  if (ncol(el) < 2) stop("Not enough columns.")
+.multi2weight <- function(edge.list, select_cols, multiedge, aggr_expression) {
+  if (ncol(edge.list) < 2) stop("Not enough columns.")
 
-  attr_cols <- isFALSE(multiedge) & ncol(el) > 2 & length(select_cols) > 2
-  col_names <- colnames(el)
+  attr_cols <- isFALSE(multiedge) & ncol(edge.list) > 2 & length(select_cols) > 2
+  col_names <- colnames(edge.list)
   col_names <- .select_cols(col_names = col_names,
                             select_cols = select_cols, attr_cols = attr_cols)
-  colnames(el) <- col_names
+  colnames(edge.list) <- col_names
 
 
   if (isFALSE(multiedge)) {
-    if (ncol(el) == 2 | length(select_cols) == 2) {
-      el$attr <- 1
+    if (ncol(edge.list) == 2 | length(select_cols) == 2) {
+      edge.list$attr <- 1
     }
   }
   if (isTRUE(multiedge)) {
@@ -177,7 +177,7 @@ multi2weight <- function(el, select_cols = NULL, aggr_expression = NULL) {
     }
   }
 
-  dplyr::as_tibble(el) %>% mutate_at(c("source", "target"), as.character) -> dat
+  dplyr::as_tibble(edge.list) %>% mutate_at(c("source", "target"), as.character) -> dat
 
   if (isFALSE(multiedge) && dat %>% count(.data$source, .data$target) %$% any(n > 1)) {
     stop('Multiedges detected. Set "multiedge=TRUE"')

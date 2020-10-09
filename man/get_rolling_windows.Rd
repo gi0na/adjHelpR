@@ -5,7 +5,7 @@
 \title{Builds rolling multiedge time-window networks from the edge_list.}
 \usage{
 get_rolling_windows(
-  el,
+  edge.list,
   window_size,
   step_size = NULL,
   start_time = NULL,
@@ -19,7 +19,7 @@ get_rolling_windows(
 )
 }
 \arguments{
-\item{el}{A data-frame with at least 3 columns: "source", "target",
+\item{edge.list}{A data-frame with at least 3 columns: "source", "target",
 "timestamp", where "from" and "to" are vertex identifiers, and "time" is a
 Unix-timestamp when the edge occurred. Alternatively, the user can select
 which column is which passing `select_cols`}
@@ -42,15 +42,15 @@ igraph graphs. Defaults to 'edgelist'. In the case of igraph graphs, adding
 `igraph_weighted` allows to generated weighted graphs.}
 
 \item{flush}{(optional) If "earliest" or unset, the first time-window starts
-at `start_time`, possibly excluding an incomplete time-window at `end_time`. If
-"latest", the last time-window ends at `end_time`, and possibly an incomplete
-time-window at start_time is discarded.}
+at `start_time`, possibly excluding an incomplete time-window at
+`end_time`. If "latest", the last time-window ends at `end_time`, and
+possibly an incomplete time-window at start_time is discarded.}
 
 \item{select_cols}{an (optional) vector specifying which columns to use. The
-first entry should contain either the name or index for the timestamp
-column, the second for the sources of links, the third for the targets of
-links. When not passed, it will be assumed that the first three columns
-are `c(timestamp,source,target)`.}
+first column should contain either the name or index for the sources of
+links, the second for the targets of links. The third entry should contain
+either the name or index for the timestamp column. When not passed, it will
+be assumed that the first three columns are `c(timestamp,source,target)`.}
 
 \item{as_date}{(optional) boolean identifying if timestamps are in date
 formats, or unix seconds.}

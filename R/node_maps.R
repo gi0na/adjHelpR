@@ -5,7 +5,7 @@
 #' If no columns named source or target are present, and the parameter is not
 #' specified, the first and second column are assumed to be source and target.
 #'
-#' @param el edgelist, either in matrix or dataframe/tibble format
+#' @param edge.list edgelist, either in matrix or dataframe/tibble format
 #' @param select_cols optional vector specifying source and target columns of
 #'   the edgelist. When absent, existing source and target columns are used. If
 #'   no columns named source or target are present, and the parameter is not
@@ -27,15 +27,15 @@
 #' nodes_from_el(el, select_cols = 1:2)
 #' nodes_from_el(el)
 #'
-nodes_from_el <- function(el, select_cols = NULL){
-  col_names <- colnames(el)
-  colnames(el) <- .select_cols(col_names, select_cols, FALSE)
-  return(unique(c(el$source, el$target)))
+nodes_from_el <- function(edge.list, select_cols = NULL){
+  col_names <- colnames(edge.list)
+  colnames(edge.list) <- .select_cols(col_names, select_cols, FALSE)
+  return(unique(c(edge.list$source, edge.list$target)))
 }
 
 
 # return the columns corresponding to source, target and attr
-.select_cols <- function(col_names, select_cols, attr_cols, timeslice=FALSE){
+.select_cols <- function(col_names, select_cols, attr_cols){
   # check sizes of objects
   if ((!is.null(select_cols)) & length(select_cols) < 2) stop("select_cols have the wrong size")
 
@@ -85,7 +85,7 @@ nodes_from_el <- function(el, select_cols = NULL){
     if(is.character(select_cols))
       select_cols <- match(select_cols, col_names)
     col_names[col_names %in% c('timestamp','source','target')] <- 1:sum(col_names %in% c('timestamp','source','target'))
-    col_names[select_cols[1:3]] <- c('timestamp','source','target')
+    col_names[select_cols[1:3]] <- c('source','target','timestamp')
     if(attr_cols & length(select_cols)>3){
       col_names[col_names %in% 'attr'] <- 4
       col_names[select_cols[4]] <- 'attr'

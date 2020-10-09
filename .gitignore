@@ -5,3 +5,5 @@
 /adjConvertR.Rproj
 /adjHelpR.Rproj
 /CRAN-RELEASE
+inst/doc
+/.DS_Store

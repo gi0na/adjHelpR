@@ -4,7 +4,7 @@
 
 #' Builds rolling multiedge time-window networks from the edge_list.
 #'
-#' @param el A data-frame with at least 3 columns: "source", "target",
+#' @param edge.list A data-frame with at least 3 columns: "source", "target",
 #'   "timestamp", where "from" and "to" are vertex identifiers, and "time" is a
 #'   Unix-timestamp when the edge occurred. Alternatively, the user can select
 #'   which column is which passing `select_cols`
@@ -17,14 +17,14 @@
 #' @param end_time (optional) If given, rolling time-windows are created until
 #'   they exceed this value. Else, this value defaults to max(edgelist$time).
 #' @param flush (optional) If "earliest" or unset, the first time-window starts
-#'   at `start_time`, possibly excluding an incomplete time-window at `end_time`. If
-#'   "latest", the last time-window ends at `end_time`, and possibly an incomplete
-#'   time-window at start_time is discarded.
+#'   at `start_time`, possibly excluding an incomplete time-window at
+#'   `end_time`. If "latest", the last time-window ends at `end_time`, and
+#'   possibly an incomplete time-window at start_time is discarded.
 #' @param select_cols an (optional) vector specifying which columns to use. The
-#'   first entry should contain either the name or index for the timestamp
-#'   column, the second for the sources of links, the third for the targets of
-#'   links. When not passed, it will be assumed that the first three columns
-#'   are `c(timestamp,source,target)`.
+#'   first column should contain either the name or index for the sources of
+#'   links, the second for the targets of links. The third entry should contain
+#'   either the name or index for the timestamp column. When not passed, it will
+#'   be assumed that the first three columns are `c(timestamp,source,target)`.
 #' @param as_date (optional) boolean identifying if timestamps are in date
 #'   formats, or unix seconds.
 #' @param out_format character vector specifying the format of the output:
@@ -41,7 +41,7 @@
 #' @export
 #' @author CZ, GC
 #'
-get_rolling_windows <- function(el,
+get_rolling_windows <- function(edge.list,
                                 window_size,
                                 step_size = NULL,
                                 start_time = NULL,
@@ -80,24 +80,24 @@ get_rolling_windows <- function(el,
 
 
   # Fix metadata
-  if (ncol(el) < 3) stop("Not enough columns.")
+  if (ncol(edge.list) < 3) stop("Not enough columns.")
 
-  col_names <- colnames(el)
+  col_names <- colnames(edge.list)
   col_names <- .select_cols_temporal(col_names = col_names,
                                      select_cols = select_cols, attr_cols = FALSE)
-  colnames(el) <- col_names
+  colnames(edge.list) <- col_names
 
-  if(is.null(start_time)) start_time <- min(el$timestamp)
-  if(is.null(end_time)) end_time <- max(el$timestamp)
+  if(is.null(start_time)) start_time <- min(edge.list$timestamp)
+  if(is.null(end_time)) end_time <- max(edge.list$timestamp)
 
   if(is.null(as_date)){
-    as_date <- suppressWarnings(is.na(as.numeric(el$timestamp[1])))
+    as_date <- suppressWarnings(is.na(as.numeric(edge.list$timestamp[1])))
   }
 
   if(isTRUE(as_date)){
-    date_format <- detect_date_format(el$timestamp[1])
+    date_format <- detect_date_format(edge.list$timestamp[1])
     if(is.null(date_format)) stop('Wrong timestamp format.')
-    el %>% mutate(timestamp = datestring_to_unix(datestring = .data$timestamp, in_format = date_format))
+    edge.list %>% mutate(timestamp = datestring_to_unix(datestring = .data$timestamp, in_format = date_format))
     date_format <- detect_date_format(start_time)
     if(is.null(date_format)) stop('Wrong start_time format.')
     start_time <- datestring_to_unix(datestring = start_time, in_format = date_format)
@@ -130,12 +130,12 @@ get_rolling_windows <- function(el,
       lower <- starting_times[i]
       upper <- ending_times[i]
       if(grepl('edge', out_format)){
-        el %>%
+        edge.list %>%
           .el2slice(start_time = lower, end_time = upper, index = FALSE) ->
           curr_window
       }
       if(grepl('adj', out_format)){
-        el %>%
+        edge.list %>%
           .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
           get_adjacency(select_cols = select_cols, multiedge = TRUE, ...) ->
           curr_window
@@ -144,7 +144,7 @@ get_rolling_windows <- function(el,
         weighted <- NULL
         if(grepl('weight', out_format)) weighted <- TRUE
         if(requireNamespace("igraph", quietly = TRUE)){
-          el %>%
+          edge.list %>%
             .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
             get_adjacency(select_cols = select_cols, multiedge = TRUE, ...) %>%
             igraph::graph_from_adjacency_matrix(weighted = weighted) ->
@@ -161,7 +161,7 @@ get_rolling_windows <- function(el,
 #' Filter edgelist for a time slice
 #'
 #' @inheritParams get_adjacency
-#' @param el the edgelist from which to compute the time slices
+#' @param edge.list the edgelist from which to compute the time slices
 #' @param start_time the timestamp a which start the timewindow slice. It can be an integer defining either the index of the start point or the unit of time at which to cut, or a datestring string.
 #' @param end_time (optional) the timestamp a which to end the timewindow slice. It can be an integer defining either the index of the end point or the unit of time at which to cut, or a datestring string.
 #' @param duration (optional) the duration of the timewindow. If `end_time` is not provided it defines how long after `start_time` the window should be cut.
@@ -175,23 +175,23 @@ get_rolling_windows <- function(el,
 #' el <- data.frame(from= c('a','b','b','c','d','d'),
 #'                 to  = c('b','c','d','a','b','a'),
 #'                 t = 1:6 )
-#' slice <- get_slice_edgelist(el, select_cols = c(3,1,2), start_time = 2, duration = 3)
-get_slice_edgelist <- function(el, select_cols = NULL, start_time, end_time=NULL, duration=NULL, index=FALSE, as_date=NULL){
-  if (ncol(el) < 3) stop("Not enough columns.")
+#' slice <- get_slice_edgelist(el, select_cols = 1:3, start_time = 2, duration = 3)
+get_slice_edgelist <- function(edge.list, select_cols = NULL, start_time, end_time=NULL, duration=NULL, index=FALSE, as_date=NULL){
+  if (ncol(edge.list) < 3) stop("Not enough columns.")
 
-  col_names <- colnames(el)
+  col_names <- colnames(edge.list)
   col_names <- .select_cols_temporal(col_names = col_names,
                                      select_cols = select_cols, attr_cols = FALSE)
-  colnames(el) <- col_names
+  colnames(edge.list) <- col_names
 
   if(is.null(as_date)){
-    as_date <- suppressWarnings(is.na(as.numeric(el$timestamp[1])))
+    as_date <- suppressWarnings(is.na(as.numeric(edge.list$timestamp[1])))
   }
 
   if(isTRUE(as_date)){
-    date_format <- detect_date_format(el$timestamp[1])
+    date_format <- detect_date_format(edge.list$timestamp[1])
     if(is.null(date_format)) stop('Wrong timestamp format.')
-    el %>% mutate(timestamp = datestring_to_unix(datestring = .data$timestamp, in_format = date_format))
+    edge.list %>% mutate(timestamp = datestring_to_unix(datestring = .data$timestamp, in_format = date_format))
     date_format <- detect_date_format(start_time)
     if(is.null(date_format)) stop('Wrong start_time format.')
     start_time <- datestring_to_unix(datestring = start_time, in_format = date_format)
@@ -208,19 +208,19 @@ get_slice_edgelist <- function(el, select_cols = NULL, start_time, end_time=NULL
   if(is.null(end_time))
     end_time <- start_time+duration
 
-  .el2slice(el, start_time, end_time, index)
+  .el2slice(edge.list, start_time, end_time, index)
 }
 
-.el2slice <- function(el, start_time, end_time, index){
+.el2slice <- function(edge.list, start_time, end_time, index){
 
   if(!index){
-    el %>%
+    edge.list %>%
       dplyr::filter(start_time <= .data$timestamp & .data$timestamp < end_time) ->
       curr_slice
   } else{
     start_index <- start_time
     end_index <- end_time-1
-    dplyr::as_tibble(el) %>%
+    dplyr::as_tibble(edge.list) %>%
       slice(start_index:end_index) ->
       curr_slice
   }

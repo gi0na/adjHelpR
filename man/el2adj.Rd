@@ -5,7 +5,7 @@
 \title{Maps edgelist to adjacency matrix}
 \usage{
 el2adj(
-  el,
+  edge.list,
   select_cols = NULL,
   multiedge = FALSE,
   aggr_expression = NULL,
@@ -17,7 +17,7 @@ el2adj(
 )
 }
 \arguments{
-\item{el}{dataframe containing a (weighted) edgelist.}
+\item{edge.list}{dataframe containing a (weighted) edgelist.}
 
 \item{select_cols}{optional vector of 3 (2 for multi-graphs) elements
 specifying which columns are the source,target, and attributes from which
@@ -30,7 +30,7 @@ vertices is computed according to '\code{aggr_expression}'.}
 
 \item{aggr_expression}{string, the expression used to compute the aggregated
 value in the adjacency matrix in the presence of multiedges. It defaults to
-'\code{dplyr::n()}'. If `el` contains other columns such as `weight`,
+'\code{dplyr::n()}'. If `edge.list` contains other columns such as `weight`,
 examples of `aggr_expression` could be `"mean(weight)"` to report the
 average of the `weight` column of the multiedges, `"min(weight)"` to report
 the minimum of the `weight` column of the multiedges.}

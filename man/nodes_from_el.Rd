@@ -4,10 +4,10 @@
 \alias{nodes_from_el}
 \title{Extract node names from an edgelist}
 \usage{
-nodes_from_el(el, select_cols = NULL)
+nodes_from_el(edge.list, select_cols = NULL)
 }
 \arguments{
-\item{el}{edgelist, either in matrix or dataframe/tibble format}
+\item{edge.list}{edgelist, either in matrix or dataframe/tibble format}
 
 \item{select_cols}{optional vector specifying source and target columns of
 the edgelist. When absent, existing source and target columns are used. If
