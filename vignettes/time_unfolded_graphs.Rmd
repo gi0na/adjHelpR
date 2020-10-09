@@ -37,9 +37,11 @@ The edge list should contain at least 3 column: the edge source, the edge target
 If you simply want to plot the time-unfolded graph from this edge list, run simply the `get_unfolded_plot` function.
 The function takes as option the direction in which you the graph to unfold. Set `vertical` to TRUE for a vertical plot, and to FALSE otherwise.
 
-```{r plot}
-get_unfolded_plot(edge.list = el, select_cols = c(2:3,1))
+```{r plot, out.width=600, dpi=150}
+get_unfolded_plot(edge.list = el, select_cols = c(2:3,1), 
+                  resize_ratio = 1.4, enlarge_ratio = .8)
 ```
+
 Note that we had to set the option `select_cols`. The function assumes that your edge.list takes the form ('source', 'target','timestamps'). Since the edge list we have passed has a different order, we pass to the function the positions of these 3 columns, i.e., 2,3,1, because the first one contains the timetamps.
 
 # More control
@@ -61,10 +63,12 @@ lyt <- get_unfolded_layout(edge.list = el, select_cols = c(2:3,1), vertical = TR
 lyt
 ```
 We can then proceed plotting the layout with our chosen specs. By passing the node labels in our preferred order we ensure the correct ordering of the nodes. For example, here we can plot from E to A
-```{r plotlayout}
+```{r plotlayout, out.height=600, dpi=150}
 # get the nodes' labels from the edge list
 node.labels <- sort(nodes_from_el(edge.list = el, select_cols = 2:3), decreasing = TRUE)
-lyt <- get_unfolded_layout(edge.list = el, select_cols = c(2:3,1), vertical = TRUE, nodes = node.labels)
+lyt <- get_unfolded_layout(edge.list = el, select_cols = c(2:3,1), 
+                           vertical = TRUE, nodes = node.labels,
+                           resize_ratio = .75, enlarge_ratio = .8)
 
 # generate the plot
 lyt %>%
@@ -72,12 +76,12 @@ lyt %>%
     ggraph() +
   # add edges with arrows
     geom_edge_link(width = grid::unit(0.5, 'mm'),
-                  arrow = arrow(length = grid::unit(2.5, 'mm'), type = 'closed'),
-                  end_cap = circle(3, 'mm'),
-                  start_cap = circle(3, 'mm'),
+                  arrow = arrow(length = grid::unit(1, 'mm'), type = 'closed'),
+                  end_cap = circle(2, 'mm'),
+                  start_cap = circle(2, 'mm'),
                   color='gray50') +
   # add nodes
-    geom_node_point(size=5) +
+    geom_node_point(size=2) +
   # add timestamps' labels on the right
     geom_node_text(aes(
       label=ifelse(gsub('_.*', '', name)==node.labels[1],

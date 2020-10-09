@@ -77,7 +77,7 @@ get_unfolded_adjacency <- function(edge.list, select_cols = NULL, nodes = NULL, 
 }
 
 # internal function to construct unfolded ggraph layout
-.get_unfolded_layout <- function(edge.list, node.labels, vertical, resize_ratio){
+.get_unfolded_layout <- function(edge.list, node.labels, vertical, resize_ratio, enlarge_ratio){
   # construct unfolded adjacency matrix
   tadj <- .get_unfolded_adjacency(edge.list = edge.list, node.labels = node.labels, vertical = vertical, sparse = FALSE)
 
@@ -96,6 +96,10 @@ get_unfolded_adjacency <- function(edge.list, select_cols = NULL, nodes = NULL, 
   lyt$y <- max(lyt$y)-lyt$y
   lyt$x <- resize_ratio*lyt$x
 
+  # enlarge by enlarge_ratio
+  lyt$y <- lyt$y*enlarge_ratio
+  lyt$x <- lyt$x*enlarge_ratio
+
   # return layout
   return(lyt)
 }
@@ -105,6 +109,7 @@ get_unfolded_adjacency <- function(edge.list, select_cols = NULL, nodes = NULL, 
 #' @inheritParams get_unfolded_adjacency
 #' @param resize_ratio ratio between horizontal and vertical dimensions of the grid layout.
 #' value < 1 gives a longer vertical side, >1 longer horizontal side.
+#' @param enlarge_ratio enlarge both y and x axis by this parameter. Defaults is 1.
 #'
 #' @return ggraph layout object to plot the time unfolded network
 #' @export
@@ -116,14 +121,14 @@ get_unfolded_adjacency <- function(edge.list, select_cols = NULL, nodes = NULL, 
 #' ts   = c( 1,  1,    2,  2,  2,     3,  3,  3,      4,  4,  4,      6)
 #' )
 #' get_unfolded_adjacency(el, select_cols = 1:3)
-get_unfolded_layout <- function(edge.list, select_cols = NULL, nodes = NULL, vertical = FALSE, resize_ratio = NULL){
+get_unfolded_layout <- function(edge.list, select_cols = NULL, nodes = NULL, vertical = FALSE, resize_ratio = NULL, enlarge_ratio = 1){
   # rename and reorganize edge.list
   edge.list <- .rename_edgelist(edge.list, select_cols)
   # get node labels
   node.labels <- ifelse_v(is.null(nodes), nodes_from_el(edge.list, select_cols = 1:2), nodes)
 
   # generate the ggraph layout
-  .get_unfolded_layout(edge.list, node.labels, vertical, resize_ratio)
+  .get_unfolded_layout(edge.list, node.labels, vertical, resize_ratio, enlarge_ratio)
 
 }
 
@@ -147,12 +152,12 @@ get_unfolded_layout <- function(edge.list, select_cols = NULL, nodes = NULL, ver
 #' ts   = c( 1,  1,    2,  2,  2,     3,  3,  3,      4,  4,  4,      6)
 #' )
 #' get_unfolded_plot(el, select_cols = 1:3)
-get_unfolded_plot <- function(edge.list, select_cols = NULL, nodes = NULL, vertical = FALSE, resize_ratio = NULL){
+get_unfolded_plot <- function(edge.list, select_cols = NULL, nodes = NULL, vertical = FALSE, resize_ratio = NULL, enlarge_ratio = 1){
 
   edge.list <- .rename_edgelist(edge.list, select_cols)
   node.labels <- ifelse_v(is.null(nodes), nodes_from_el(edge.list, select_cols = 1:2), nodes)
 
-  lyt <- .get_unfolded_layout(edge.list, node.labels, vertical, resize_ratio)
+  lyt <- .get_unfolded_layout(edge.list, node.labels, vertical, resize_ratio, enlarge_ratio)
   lyt %>%
     ggraph::ggraph() +
     ggraph::geom_edge_fan(width = grid::unit(0.5, 'mm'),
