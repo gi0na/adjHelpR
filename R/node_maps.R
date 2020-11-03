@@ -87,7 +87,6 @@ nodes_from_el <- function(edge.list, select_cols = NULL){
     col_names[col_names %in% c('timestamp','source','target')] <- 1:sum(col_names %in% c('timestamp','source','target'))
     col_names[select_cols[1:3]] <- c('source','target','timestamp')
     if(attr_cols & length(select_cols)>3){
-      col_names[col_names %in% 'attr'] <- 4
       col_names[select_cols[4]] <- 'attr'
     }
   }

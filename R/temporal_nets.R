@@ -25,6 +25,7 @@
 #'   links, the second for the targets of links. The third entry should contain
 #'   either the name or index for the timestamp column. When not passed, it will
 #'   be assumed that the first three columns are `c(timestamp,source,target)`.
+#'   If select_cols has a fourth entry, it will use this as edgeweight.
 #' @param as_date (optional) boolean identifying if timestamps are in date
 #'   formats, or unix seconds.
 #' @param out_format character vector specifying the format of the output:
@@ -84,8 +85,9 @@ get_rolling_windows <- function(edge.list,
 
   col_names <- colnames(edge.list)
   col_names <- .select_cols_temporal(col_names = col_names,
-                                     select_cols = select_cols, attr_cols = FALSE)
+                                     select_cols = select_cols, attr_cols = length(select_cols)==4)
   colnames(edge.list) <- col_names
+  edge.list %>% select(source,target,timestamp,attr) -> edge.list
 
   if(is.null(start_time)) start_time <- min(edge.list$timestamp)
   if(is.null(end_time)) end_time <- max(edge.list$timestamp)
@@ -146,7 +148,6 @@ get_rolling_windows <- function(edge.list,
         if(requireNamespace("igraph", quietly = TRUE)){
           edge.list %>%
             .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
-            get_adjacency(select_cols = select_cols, multiedge = TRUE, ...) %>%
             igraph::graph_from_adjacency_matrix(weighted = weighted) ->
             curr_window
         }
