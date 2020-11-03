@@ -90,6 +90,18 @@ specified, the first and second column are assumed to be source and target." />
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/time_unfolded_graphs.html">Create and Plot Time Unfolded Graphs</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -118,13 +130,13 @@ If no columns named source or target are present, and the parameter is not
 specified, the first and second column are assumed to be source and target.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>nodes_from_el</span>(<span class='no'>el</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>nodes_from_el</span>(<span class='no'>edge.list</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>el</th>
+      <th>edge.list</th>
       <td><p>edgelist, either in matrix or dataframe/tibble format</p></td>
     </tr>
     <tr>

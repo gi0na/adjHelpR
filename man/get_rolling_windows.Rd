@@ -50,7 +50,8 @@ possibly an incomplete time-window at start_time is discarded.}
 first column should contain either the name or index for the sources of
 links, the second for the targets of links. The third entry should contain
 either the name or index for the timestamp column. When not passed, it will
-be assumed that the first three columns are `c(timestamp,source,target)`.}
+be assumed that the first three columns are `c(timestamp,source,target)`.
+If select_cols has a fourth entry, it will use this as edgeweight.}
 
 \item{as_date}{(optional) boolean identifying if timestamps are in date
 formats, or unix seconds.}

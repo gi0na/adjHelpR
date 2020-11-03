@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Compute a transition matrix from an adjacency matrix. — get_transition • adjHelpR</title>
+<title>Plot the time unfolded graph based on an edge list — get_unfolded_plot • adjHelpR</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,10 @@
 
 
 
-<meta property="og:title" content="Compute a transition matrix from an adjacency matrix. — get_transition" />
-<meta property="og:description" content="This method take an adjacency matrix (dense or sparse), and returns the
-corresponding transition matrix in the same format. If the optional argument
-`directed` is specified to be FALSE, then before computing the transition
-matrix the adjacency matrix is forced be symmetric." />
+<meta property="og:title" content="Plot the time unfolded graph based on an edge list — get_unfolded_plot" />
+<meta property="og:description" content="The function generates a ggraph plot with some sensible defaults. For full
+customisation, it is recommended to generated the ggraph layout from
+`get_unfolded_layout` and then customise the plot." />
 
 
 
@@ -118,64 +117,80 @@ matrix the adjacency matrix is forced be symmetric." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Compute a transition matrix from an adjacency matrix.</h1>
+    <h1>Plot the time unfolded graph based on an edge list</h1>
     
-    <div class="hidden name"><code>get_transition.Rd</code></div>
+    <div class="hidden name"><code>get_unfolded_plot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This method take an adjacency matrix (dense or sparse), and returns the
-corresponding transition matrix in the same format. If the optional argument
-`directed` is specified to be FALSE, then before computing the transition
-matrix the adjacency matrix is forced be symmetric.</p>
+    <p>The function generates a ggraph plot with some sensible defaults. For full
+customisation, it is recommended to generated the ggraph layout from
+`get_unfolded_layout` and then customise the plot.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_transition</span>(<span class='no'>adj</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for matrix</span>
-<span class='fu'>get_transition</span>(<span class='no'>adj</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for dgTMatrix</span>
-<span class='fu'>get_transition</span>(<span class='no'>adj</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for dgCMatrix</span>
-<span class='fu'>get_transition</span>(<span class='no'>adj</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for sparseMatrix</span>
-<span class='fu'>get_transition</span>(<span class='no'>adj</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)
-
-<span class='co'># S3 method for default</span>
-<span class='fu'>get_transition</span>(<span class='no'>adj</span>, <span class='kw'>directed</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='no'>...</span>)</pre>
+    <pre class="usage"><span class='fu'>get_unfolded_plot</span>(
+  <span class='no'>edge.list</span>,
+  <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>nodes</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>vertical</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
+  <span class='kw'>resize_ratio</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
+  <span class='kw'>enlarge_ratio</span> <span class='kw'>=</span> <span class='fl'>1</span>
+)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>adj</th>
-      <td><p>adjacency matrix, either dense or sparse</p></td>
+      <th>edge.list</th>
+      <td><p>data.frame or tibble containing the edge list. It needs at
+least three column: the column with edge sources, the edge targets, and the
+timestamps of each edge. The order of columns should be 'timestamp',
+'source', 'target'. If the edge.list columns come in different orders, use
+`select_cols` to specify the right order. See the example for details.</p></td>
     </tr>
     <tr>
-      <th>directed</th>
-      <td><p>boolean, optional argument specifying if the matrix refers to
-a directed graph.</p></td>
+      <th>select_cols</th>
+      <td><p>optional vector of 3 (2 for multi-graphs) elements
+specifying which columns are the source,target, and attributes from which
+building the graph. Otherwise Column 1 is assumed to be the source, column
+2 the target, column 3 the attribute. In the case of multi-graphs, the
+third element is not needed and the number of edges between each pair of
+vertices is computed according to '<code>aggr_expression</code>'.</p></td>
     </tr>
     <tr>
-      <th>...</th>
-      <td><p>additional parameters to and from the main method. Currently not
-used.</p></td>
+      <th>nodes</th>
+      <td><p>optional vector containing all node names in case disconnected
+nodes should be included.</p></td>
+    </tr>
+    <tr>
+      <th>vertical</th>
+      <td><p>unfold vertically or horizontally? Defaults to FALSE
+(horizontal)</p></td>
+    </tr>
+    <tr>
+      <th>resize_ratio</th>
+      <td><p>ratio between horizontal and vertical dimensions of the grid layout.
+value &lt; 1 gives a longer vertical side, &gt;1 longer horizontal side.</p></td>
+    </tr>
+    <tr>
+      <th>enlarge_ratio</th>
+      <td><p>enlarge both y and x axis by this parameter. Defaults is 1.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A transition matrix in the same format of `adj`.</p>
+    <p>ggraph plot object with directed edges whose direction follows the
+  arrow of time, aligned nodes in the order passed originally, node labels
+  along the nodes and timestamps labels along the direction of time.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>from</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>),
-                <span class='kw'>to</span>  <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'a'</span>),
-                <span class='kw'>attr</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>( <span class='fl'>12</span>, <span class='fl'>6</span>, <span class='fl'>12</span> , <span class='fl'>6</span> , <span class='fl'>6</span> , <span class='fl'>6</span> ))
-<span class='no'>adj</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='el2adj.html'>el2adj</a></span>(<span class='no'>el</span>)
-<span class='no'>t_mat</span> <span class='kw'>&lt;-</span> <span class='fu'>get_transition</span>(<span class='no'>adj</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(
+<span class='kw'>from</span> <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'A'</span>,<span class='st'>'B'</span>,  <span class='st'>'A'</span>,<span class='st'>'B'</span>,<span class='st'>'B'</span>,   <span class='st'>'A'</span>,<span class='st'>'C'</span>,<span class='st'>'C'</span>,    <span class='st'>'A'</span>,<span class='st'>'B'</span>,<span class='st'>'C'</span>,    <span class='st'>'D'</span>),
+<span class='kw'>to</span>   <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'C'</span>,<span class='st'>'C'</span>,  <span class='st'>'C'</span>,<span class='st'>'C'</span>,<span class='st'>'D'</span>,   <span class='st'>'C'</span>,<span class='st'>'D'</span>,<span class='st'>'E'</span>,    <span class='st'>'C'</span>,<span class='st'>'C'</span>,<span class='st'>'E'</span>,    <span class='st'>'E'</span>),
+<span class='kw'>ts</span>   <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>( <span class='fl'>1</span>,  <span class='fl'>1</span>,    <span class='fl'>2</span>,  <span class='fl'>2</span>,  <span class='fl'>2</span>,     <span class='fl'>3</span>,  <span class='fl'>3</span>,  <span class='fl'>3</span>,      <span class='fl'>4</span>,  <span class='fl'>4</span>,  <span class='fl'>4</span>,      <span class='fl'>6</span>)
+)
+<span class='fu'>get_unfolded_plot</span>(<span class='no'>el</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>)</div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 28 rows containing missing values (geom_text).</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 30 rows containing missing values (geom_text).</span></div><div class='img'><img src='get_unfolded_plot-1.png' alt='' width='700' height='433' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

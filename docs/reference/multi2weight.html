@@ -88,6 +88,18 @@ When no expression is specified, the 'attr' column returns the multiedge multipl
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="../articles/time_unfolded_graphs.html">Create and Plot Time Unfolded Graphs</a>
+    </li>
+  </ul>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -114,13 +126,13 @@ When no expression is specified, the 'attr' column returns the multiedge multipl
 When no expression is specified, the 'attr' column returns the multiedge multiplicity.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>aggr_expression</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>multi2weight</span>(<span class='no'>edge.list</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>aggr_expression</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>el</th>
+      <th>edge.list</th>
       <td><p>dataframe containing a (weighted) edgelist.</p></td>
     </tr>
     <tr>
@@ -134,7 +146,7 @@ building the weighted edge list. Otherwise column 1 is assumed to be the source 
       <th>aggr_expression</th>
       <td><p>string, the expression used to compute the aggregated
 value in the adjacency matrix in the presence of multiedges. It defaults to
-'<code><a href='https://dplyr.tidyverse.org/reference/context.html'>dplyr::n()</a></code>'. If `el` contains other columns such as `weight`,
+'<code><a href='https://dplyr.tidyverse.org/reference/context.html'>dplyr::n()</a></code>'. If `edge.list` contains other columns such as `weight`,
 examples of `aggr_expression` could be `"mean(weight)"` to report the
 average of the `weight` column of the multiedges, `"min(weight)"` to report
 the minimum of the `weight` column of the multiedges.</p></td>
