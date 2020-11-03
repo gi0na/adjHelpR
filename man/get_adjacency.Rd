@@ -3,6 +3,7 @@
 \name{get_adjacency}
 \alias{get_adjacency}
 \alias{get_adjacency.tbl}
+\alias{get_adjacency.tbl_graph}
 \alias{get_adjacency.data.frame}
 \alias{get_adjacency.matrix}
 \alias{get_adjacency.dgTMatrix}
@@ -27,6 +28,20 @@ get_adjacency(
 )
 
 \method{get_adjacency}{tbl}(
+  x,
+  select_cols = NULL,
+  multiedge = NULL,
+  aggr_expression = NULL,
+  nodes = NULL,
+  sparse = TRUE,
+  drop_names = FALSE,
+  directed = NULL,
+  selfloops = NULL,
+  edgelist = NULL,
+  ...
+)
+
+\method{get_adjacency}{tbl_graph}(
   x,
   select_cols = NULL,
   multiedge = NULL,

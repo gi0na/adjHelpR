@@ -39,6 +39,16 @@ get_adjacency.tbl <- function(x, select_cols = NULL, multiedge = NULL, aggr_expr
 
 #' @rdname get_adjacency
 #' @export
+get_adjacency.tbl_graph <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
+                              drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...){
+  if(is.null(multiedge)) multiedge <- FALSE
+  x %>% tidygraph::activate('edges') %>% dplyr::as_tibble() %>%
+    el2adj(select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,
+         drop_names = drop_names, directed = directed, selfloops = selfloops)
+}
+
+#' @rdname get_adjacency
+#' @export
 get_adjacency.data.frame <- function(x, select_cols = NULL, multiedge = NULL, aggr_expression = NULL, nodes = NULL, sparse = TRUE,
                                      drop_names = FALSE, directed = NULL, selfloops = NULL, edgelist = NULL, ...){
   get_adjacency(dplyr::as_tibble(x), select_cols = select_cols, multiedge = multiedge, aggr_expression = aggr_expression, nodes = nodes, sparse = sparse,

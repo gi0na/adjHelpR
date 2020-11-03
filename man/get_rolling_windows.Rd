@@ -2,6 +2,10 @@
 % Please edit documentation in R/temporal_nets.R
 \name{get_rolling_windows}
 \alias{get_rolling_windows}
+\alias{get_rolling_windows.tbl}
+\alias{get_rolling_windows.tbl_graph}
+\alias{get_rolling_windows.igraph}
+\alias{get_rolling_windows.default}
 \title{Builds rolling multiedge time-window networks from the edge_list.}
 \usage{
 get_rolling_windows(
@@ -17,10 +21,68 @@ get_rolling_windows(
   ncores = NULL,
   ...
 )
+
+\method{get_rolling_windows}{tbl}(
+  edge.list,
+  window_size,
+  step_size = NULL,
+  start_time = NULL,
+  end_time = NULL,
+  out_format = "edgelist",
+  flush = "earliest",
+  select_cols = NULL,
+  as_date = NULL,
+  ncores = NULL,
+  nodes_tbl = NULL,
+  ...
+)
+
+\method{get_rolling_windows}{tbl_graph}(
+  edge.list,
+  window_size,
+  step_size = NULL,
+  start_time = NULL,
+  end_time = NULL,
+  out_format = "edgelist",
+  flush = "earliest",
+  select_cols = NULL,
+  as_date = NULL,
+  ncores = NULL,
+  ...
+)
+
+\method{get_rolling_windows}{igraph}(
+  edge.list,
+  window_size,
+  step_size = NULL,
+  start_time = NULL,
+  end_time = NULL,
+  out_format = "edgelist",
+  flush = "earliest",
+  select_cols = NULL,
+  as_date = NULL,
+  ncores = NULL,
+  ...
+)
+
+\method{get_rolling_windows}{default}(
+  edge.list,
+  window_size,
+  step_size = NULL,
+  start_time = NULL,
+  end_time = NULL,
+  out_format = "edgelist",
+  flush = "earliest",
+  select_cols = NULL,
+  as_date = NULL,
+  ncores = NULL,
+  ...
+)
 }
 \arguments{
-\item{edge.list}{A data-frame with at least 3 columns: "source", "target",
-"timestamp", where "from" and "to" are vertex identifiers, and "time" is a
+\item{edge.list}{A data-frame, tibble, with at least 3 columns: "source",
+"target", "timestamp", or a graph object that can be coerced to such table,
+where "from" and "to" are vertex identifiers, and "time" is a
 Unix-timestamp when the edge occurred. Alternatively, the user can select
 which column is which passing `select_cols`}
 
@@ -37,9 +99,9 @@ starting at this timestamp. Else, they are started at min(edgelist$time).}
 they exceed this value. Else, this value defaults to max(edgelist$time).}
 
 \item{out_format}{character vector specifying the format of the output:
-'edgelist' for edgelists, 'adjacency' for adjacency matrices, `igraph` for
-igraph graphs. Defaults to 'edgelist'. In the case of igraph graphs, adding
-`igraph_weighted` allows to generated weighted graphs.}
+'edgelist' for edgelists, 'adjacency' for adjacency matrices, 'tbl_graph' for `tbl_graph`s, 'igraph' for
+`igraph` graphs. Defaults to 'edgelist'. In the case of igraph and tbl_graph graphs, adding
+'_weighted' (as in 'igraph_weighted') allows to generate weighted graphs.}
 
 \item{flush}{(optional) If "earliest" or unset, the first time-window starts
 at `start_time`, possibly excluding an incomplete time-window at
@@ -60,6 +122,10 @@ formats, or unix seconds.}
 
 \item{...}{additional parameters passed to internal constructors. E.g., to
 `get_adjacency`.}
+
+\item{nodes_tbl}{(optional) tibble containing node attributes to be added to
+tbl_graph objects when tbl_graph output is chosen. The tibble should have
+a node_key column matching node names used in the edge.list.}
 }
 \value{
 A tibble with two columns "network" and "time", where "network" is

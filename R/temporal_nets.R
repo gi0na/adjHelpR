@@ -4,8 +4,9 @@
 
 #' Builds rolling multiedge time-window networks from the edge_list.
 #'
-#' @param edge.list A data-frame with at least 3 columns: "source", "target",
-#'   "timestamp", where "from" and "to" are vertex identifiers, and "time" is a
+#' @param edge.list A data-frame, tibble, with at least 3 columns: "source",
+#'   "target", "timestamp", or a graph object that can be coerced to such table,
+#'   where "from" and "to" are vertex identifiers, and "time" is a
 #'   Unix-timestamp when the edge occurred. Alternatively, the user can select
 #'   which column is which passing `select_cols`
 #' @param window_size The duration of each time-window network given as the
@@ -29,9 +30,9 @@
 #' @param as_date (optional) boolean identifying if timestamps are in date
 #'   formats, or unix seconds.
 #' @param out_format character vector specifying the format of the output:
-#'   'edgelist' for edgelists, 'adjacency' for adjacency matrices, `igraph` for
-#'   igraph graphs. Defaults to 'edgelist'. In the case of igraph graphs, adding
-#'   `igraph_weighted` allows to generated weighted graphs.
+#'   'edgelist' for edgelists, 'adjacency' for adjacency matrices, 'tbl_graph' for `tbl_graph`s, 'igraph' for
+#'   `igraph` graphs. Defaults to 'edgelist'. In the case of igraph and tbl_graph graphs, adding
+#'   '_weighted' (as in 'igraph_weighted') allows to generate weighted graphs.
 #' @param ... additional parameters passed to internal constructors. E.g., to
 #'   `get_adjacency`.
 #' @param ncores integer, number of cores to use. Defaults to 1.
@@ -53,6 +54,26 @@ get_rolling_windows <- function(edge.list,
                                 as_date = NULL,
                                 ncores = NULL,
                                 ...) {
+  UseMethod("get_rolling_windows")
+}
+
+#' @rdname get_rolling_windows
+#' @param nodes_tbl (optional) tibble containing node attributes to be added to
+#'   tbl_graph objects when tbl_graph output is chosen. The tibble should have
+#'   a node_key column matching node names used in the edge.list.
+#' @export
+get_rolling_windows.tbl <- function(edge.list,
+                                    window_size,
+                                    step_size = NULL,
+                                    start_time = NULL,
+                                    end_time = NULL,
+                                    out_format = 'edgelist',
+                                    flush = "earliest",
+                                    select_cols = NULL,
+                                    as_date = NULL,
+                                    ncores = NULL,
+                                    nodes_tbl = NULL,
+                                    ...) {
   # Builds rolling multiedge time-window networks from the edge_list.
   #
   # Args:
@@ -87,7 +108,11 @@ get_rolling_windows <- function(edge.list,
   col_names <- .select_cols_temporal(col_names = col_names,
                                      select_cols = select_cols, attr_cols = length(select_cols)==4)
   colnames(edge.list) <- col_names
-  edge.list %>% select(source,target,timestamp,attr) -> edge.list
+  if(length(select_cols)>3){
+    edge.list %>% select('source','target','timestamp','attr') -> edge.list
+  } else{
+    edge.list %>% select('source','target','timestamp') -> edge.list
+  }
 
   if(is.null(start_time)) start_time <- min(edge.list$timestamp)
   if(is.null(end_time)) end_time <- max(edge.list$timestamp)
@@ -136,27 +161,120 @@ get_rolling_windows <- function(edge.list,
           .el2slice(start_time = lower, end_time = upper, index = FALSE) ->
           curr_window
       }
+      if(grepl('graph', out_format)){
+        if(requireNamespace("tidygraph", quietly = TRUE)){
+          if(is.null(nodes_tbl)){
+          edge.list %>%
+            .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
+            conditional_makeweighted(select_cols = select_cols, out_format=out_format) %>%
+            tidygraph::as_tbl_graph() ->
+            curr_window
+          } else{
+            edge.list %>%
+              .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
+              conditional_makeweighted(select_cols = select_cols, out_format=out_format) %>%
+              tidygraph::as_tbl_graph() %>%
+              tidygraph::activate('nodes') %>%
+              rename(node_key = 'name') %>%
+              inner_join(nodes_tbl) %>%
+              dplyr::select(-'node_key') ->
+              curr_window
+          }
+        }
+      }
       if(grepl('adj', out_format)){
         edge.list %>%
           .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
           get_adjacency(select_cols = select_cols, multiedge = TRUE, ...) ->
           curr_window
       }
-      if(grepl('igraph', out_format)){
-        weighted <- NULL
-        if(grepl('weight', out_format)) weighted <- TRUE
-        if(requireNamespace("igraph", quietly = TRUE)){
-          edge.list %>%
-            .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
-            igraph::graph_from_adjacency_matrix(weighted = weighted) ->
-            curr_window
-        }
-      }
+      # if(grepl('igraph', out_format)){
+      #   weighted <- NULL
+      #   if(grepl('weight', out_format)) weighted <- TRUE
+      #   if(requireNamespace("igraph", quietly = TRUE)){
+      #     edge.list %>%
+      #       .el2slice(start_time = lower, end_time = upper, index = FALSE) %>%
+      #       igraph::graph_from_adjacency_matrix(weighted = weighted) ->
+      #       curr_window
+      #   }
+      # }
       return(curr_window)
     }, mc.cores = ncores)
 
   # Return
   return(dplyr::tibble("time" = starting_times, "network" = windows))
+}
+
+conditional_makeweighted <- function(x, select_cols, out_format){
+  if(grepl('weight', out_format)){
+    x %>% multi2weight(select_cols) -> x
+  }
+  return(x)
+}
+
+#' @rdname get_rolling_windows
+#' @export
+get_rolling_windows.tbl_graph <- function(edge.list,
+                                           window_size,
+                                           step_size = NULL,
+                                           start_time = NULL,
+                                           end_time = NULL,
+                                           out_format = 'edgelist',
+                                           flush = "earliest",
+                                           select_cols = NULL,
+                                           as_date = NULL,
+                                           ncores = NULL,
+                                           ...) {
+  edge.list %>% tidygraph::activate('edges') %>% dplyr::as_tibble() %>%
+    get_rolling_windows(window_size, step_size,
+                        start_time, end_time, out_format,
+                        flush, select_cols, as_date, ncores,
+                        nodes_tbl = edge.list %>%
+                          tidygraph::activate('nodes') %>%
+                          dplyr::as_tibble() %>%
+                          dplyr::mutate(node_key = as.character(1:length(.data$name))), ...)
+
+}
+
+#' @rdname get_rolling_windows
+#' @export
+get_rolling_windows.igraph <- function(edge.list,
+                                          window_size,
+                                          step_size = NULL,
+                                          start_time = NULL,
+                                          end_time = NULL,
+                                          out_format = 'edgelist',
+                                          flush = "earliest",
+                                          select_cols = NULL,
+                                          as_date = NULL,
+                                          ncores = NULL,
+                                          ...) {
+  edge.list %>% tidygraph::as_tbl_graph() %>%
+    get_rolling_windows(edge.list, window_size, step_size,
+                        start_time, end_time, out_format,
+                        flush, select_cols, as_date, ncores,
+                        tbl_graph = edge.list %>% tidygraph::as_tbl_graph(), ...)
+
+}
+
+#' @rdname get_rolling_windows
+#' @export
+get_rolling_windows.default <- function(edge.list,
+                                          window_size,
+                                          step_size = NULL,
+                                          start_time = NULL,
+                                          end_time = NULL,
+                                          out_format = 'edgelist',
+                                          flush = "earliest",
+                                          select_cols = NULL,
+                                          as_date = NULL,
+                                          ncores = NULL,
+                                          ...) {
+  edge.list %>% dplyr::as_tibble() %>%
+    get_rolling_windows(edge.list, window_size, step_size,
+                        start_time, end_time, out_format,
+                        flush, select_cols, as_date, ncores,...)
+
 }
 
 #' Filter edgelist for a time slice
