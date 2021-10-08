@@ -10,7 +10,8 @@ get_unfolded_layout(
   nodes = NULL,
   vertical = FALSE,
   resize_ratio = NULL,
-  enlarge_ratio = 1
+  enlarge_ratio = 1,
+  ...
 )
 }
 \arguments{
@@ -37,6 +38,8 @@ nodes should be included.}
 value < 1 gives a longer vertical side, >1 longer horizontal side.}
 
 \item{enlarge_ratio}{enlarge both y and x axis by this parameter. Defaults is 1.}
+
+\item{...}{extra parameters passed to internal methods}
 }
 \value{
 ggraph layout object to plot the time unfolded network

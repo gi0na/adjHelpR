@@ -9,7 +9,8 @@ get_unfolded_adjacency(
   select_cols = NULL,
   nodes = NULL,
   vertical = FALSE,
-  sparse = TRUE
+  sparse = TRUE,
+  ...
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ nodes should be included.}
 (horizontal)}
 
 \item{sparse}{boolean, return sparse matrix? default to TRUE}
+
+\item{...}{extra parameters passed to internal methods}
 }
 \value{
 The time unfolded (nodes x timestamps) x (nodes x timestamps)
