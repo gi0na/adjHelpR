@@ -8,7 +8,7 @@ ifelse_v <- function(test, yes, no){
   paste(rep(node.labels,max(ts)-min(ts)+1),rep((as.numeric(flat)+min(ts)-1):(max(ts)), each=length(node.labels)), sep = '_')
 }
 .get_unfolded_nodes_horizontal <- function(node.labels, ts, flat = FALSE){
-  nodes <- paste(rep(node.labels,each=max(ts)+1-min(ts)),(as.numeric(flat)+min(ts)-1):(max(ts)), sep = "_")
+  nodes <- paste(rep(node.labels,each=max(ts)+1-min(ts)+!flat),(as.numeric(flat)+min(ts)-1):(max(ts)), sep = "_")
 }
 
 # internal function to return unfolded adjacency
@@ -156,6 +156,7 @@ get_unfolded_layout <- function(edge.list, select_cols = NULL, nodes = NULL, ver
 get_unfolded_plot <- function(edge.list, select_cols = NULL, nodes = NULL, vertical = FALSE, resize_ratio = NULL, enlarge_ratio = 1, ...){
 
   edge.list <- .rename_edgelist(edge.list, select_cols)
+  edge.list$pos <- edge.list$pos + 1
   node.labels <- ifelse_v(is.null(nodes), nodes_from_el(edge.list, select_cols = 1:2), nodes)
 
   lyt <- .get_unfolded_layout(edge.list, node.labels, vertical, resize_ratio, enlarge_ratio, ...)
