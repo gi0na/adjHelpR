@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">adjHelpR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,15 +124,15 @@
     <p>Filter edgelist for a time slice</p>
     </div>
 
-    <pre class="usage"><span class='fu'>get_slice_edgelist</span>(
-  <span class='no'>edge.list</span>,
-  <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>start_time</span>,
-  <span class='kw'>end_time</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>duration</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>index</span> <span class='kw'>=</span> <span class='fl'>FALSE</span>,
-  <span class='kw'>as_date</span> <span class='kw'>=</span> <span class='kw'>NULL</span>
-)</pre>
+    <pre class="usage"><span class='fu'>get_slice_edgelist</span><span class='op'>(</span>
+  <span class='va'>edge.list</span>,
+  select_cols <span class='op'>=</span> <span class='cn'>NULL</span>,
+  <span class='va'>start_time</span>,
+  end_time <span class='op'>=</span> <span class='cn'>NULL</span>,
+  duration <span class='op'>=</span> <span class='cn'>NULL</span>,
+  index <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  as_date <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -177,10 +177,11 @@ vertices is computed according to '<code>aggr_expression</code>'.</p></td>
     <p>a tibble with the edgelist cut such that timestamps are between `start_time` and `end_time`</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>from</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>),
-                <span class='kw'>to</span>  <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'a'</span>),
-                <span class='kw'>t</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>6</span> )
-<span class='no'>slice</span> <span class='kw'>&lt;-</span> <span class='fu'>get_slice_edgelist</span>(<span class='no'>el</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>3</span>, <span class='kw'>start_time</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>duration</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div></pre>
+    <pre class="examples"><div class='input'><span class='va'>el</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>from<span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span><span class='op'>)</span>,
+                to  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'a'</span><span class='op'>)</span>,
+                t <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>6</span> <span class='op'>)</span>
+<span class='va'>slice</span> <span class='op'>&lt;-</span> <span class='fu'>get_slice_edgelist</span><span class='op'>(</span><span class='va'>el</span>, select_cols <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>3</span>, start_time <span class='op'>=</span> <span class='fl'>2</span>, duration <span class='op'>=</span> <span class='fl'>3</span><span class='op'>)</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -196,7 +197,7 @@ vertices is computed according to '<code>aggr_expression</code>'.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

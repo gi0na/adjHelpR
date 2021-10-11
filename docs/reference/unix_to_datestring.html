@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">adjHelpR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -80,7 +80,7 @@
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -124,7 +124,7 @@
     <p>Converts the given unix_timestamp into a date-string.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>unix_to_datestring</span>(<span class='no'>unix_timestamp</span>, <span class='kw'>out_format</span> <span class='kw'>=</span> <span class='st'>"%Y-%m-%d"</span>)</pre>
+    <pre class="usage"><span class='fu'>unix_to_datestring</span><span class='op'>(</span><span class='va'>unix_timestamp</span>, out_format <span class='op'>=</span> <span class='st'>"%Y-%m-%d"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -147,8 +147,10 @@ see section "Details" in help(strptime)</p></td>
       formatted according to out_format.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'>      <span class='fu'>unix_to_datestring</span>(<span class='fl'>0</span>)</div><div class='output co'>#&gt; [1] "1970-01-01"</div><div class='input'>      <span class='co'># 1970-01-01</span>
-      <span class='fu'>unix_to_datestring</span>(<span class='fl'>86400</span>)</div><div class='output co'>#&gt; [1] "1970-01-02"</div><div class='input'>      # 1970-01-02
+    <pre class="examples"><div class='input'>      <span class='fu'>unix_to_datestring</span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "1970-01-01"</div><div class='input'>      <span class='co'># 1970-01-01</span>
+      <span class='fu'>unix_to_datestring</span><span class='op'>(</span><span class='fl'>86400</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "1970-01-02"</div><div class='input'>      <span class='co'># 1970-01-02</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -165,7 +167,7 @@ see section "Details" in help(strptime)</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>

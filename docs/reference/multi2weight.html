@@ -73,7 +73,7 @@ When no expression is specified, the 'attr' column returns the multiedge multipl
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">adjHelpR</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.1</span>
       </span>
     </div>
 
@@ -81,7 +81,7 @@ When no expression is specified, the 'attr' column returns the multiedge multipl
       <ul class="nav navbar-nav">
         <li>
   <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -126,7 +126,7 @@ When no expression is specified, the 'attr' column returns the multiedge multipl
 When no expression is specified, the 'attr' column returns the multiedge multiplicity.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>multi2weight</span>(<span class='no'>edge.list</span>, <span class='kw'>select_cols</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>aggr_expression</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>edge.list</span>, select_cols <span class='op'>=</span> <span class='cn'>NULL</span>, aggr_expression <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -158,88 +158,95 @@ the minimum of the `weight` column of the multiedges.</p></td>
     <p>a tibble with 3 columns: source, target, and attr, where attr has been computed according to `aggr_expression`.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='no'>el</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span>(<span class='kw'>from</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>),
-             <span class='kw'>to</span>  <span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>(<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'a'</span>,<span class='st'>'a'</span>,<span class='st'>'a'</span>),
-             <span class='kw'>attr</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>( <span class='fl'>1</span>,  <span class='fl'>1</span>,  <span class='fl'>1</span> , <span class='fl'>1</span> , <span class='fl'>1</span> , <span class='fl'>1</span>,  <span class='fl'>2</span> , <span class='fl'>3</span> ),
-            <span class='kw'>attr2</span><span class='kw'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span>( <span class='fl'>TRUE</span>,  <span class='fl'>FALSE</span>,  <span class='fl'>TRUE</span> , <span class='fl'>TRUE</span> , <span class='fl'>FALSE</span> , <span class='fl'>TRUE</span>,  <span class='fl'>TRUE</span> , <span class='fl'>FALSE</span> ))
+    <pre class="examples"><div class='input'><span class='va'>el</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/data.frame.html'>data.frame</a></span><span class='op'>(</span>from<span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span>,<span class='st'>'d'</span><span class='op'>)</span>,
+             to  <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>'b'</span>,<span class='st'>'c'</span>,<span class='st'>'d'</span>,<span class='st'>'a'</span>,<span class='st'>'b'</span>,<span class='st'>'a'</span>,<span class='st'>'a'</span>,<span class='st'>'a'</span><span class='op'>)</span>,
+             attr<span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> <span class='fl'>1</span>,  <span class='fl'>1</span>,  <span class='fl'>1</span> , <span class='fl'>1</span> , <span class='fl'>1</span> , <span class='fl'>1</span>,  <span class='fl'>2</span> , <span class='fl'>3</span> <span class='op'>)</span>,
+            attr2<span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span> <span class='cn'>TRUE</span>,  <span class='cn'>FALSE</span>,  <span class='cn'>TRUE</span> , <span class='cn'>TRUE</span> , <span class='cn'>FALSE</span> , <span class='cn'>TRUE</span>,  <span class='cn'>TRUE</span> , <span class='cn'>FALSE</span> <span class='op'>)</span><span class='op'>)</span>
 <span class='co'># edgelist with multiedge multiplicities</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>)</div><div class='output co'>#&gt; <span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target  attr
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;int&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b          1
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c          1
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d          1
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a          1
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a          3
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b          1</div><div class='input'>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b          1
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c          1
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d          1
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a          1
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a          3
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b          1</div><div class='input'>
 <span class='co'># edgelist with sum of attr</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>aggr_expression</span><span class='kw'>=</span><span class='st'>'sum(attr)'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span>, aggr_expression<span class='op'>=</span><span class='st'>'sum(attr)'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target  attr
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b          1
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c          1
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d          1
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a          1
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a          6
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b          1</div><div class='input'>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b          1
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c          1
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d          1
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a          1
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a          6
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b          1</div><div class='input'>
 <span class='co'># edgelist with mean of attr</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>aggr_expression</span><span class='kw'>=</span><span class='st'>'mean(attr)'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span>, aggr_expression<span class='op'>=</span><span class='st'>'mean(attr)'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target  attr
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b          1
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c          1
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d          1
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a          1
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a          2
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b          1</div><div class='input'>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b          1
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c          1
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d          1
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a          1
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a          2
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b          1</div><div class='input'>
 <span class='co'># edgelist with min of attr</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>aggr_expression</span><span class='kw'>=</span><span class='st'>'min(attr)'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span>, aggr_expression<span class='op'>=</span><span class='st'>'min(attr)'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target  attr
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b          1
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c          1
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d          1
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a          1
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a          1
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b          1</div><div class='input'>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b          1
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c          1
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d          1
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a          1
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a          1
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b          1</div><div class='input'>
 <span class='co'># edgelist with max of attr</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>aggr_expression</span><span class='kw'>=</span><span class='st'>'max(attr)'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span>, aggr_expression<span class='op'>=</span><span class='st'>'max(attr)'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target  attr
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b          1
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c          1
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d          1
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a          1
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a          3
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b          1</div><div class='input'>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b          1
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c          1
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d          1
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a          1
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a          3
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b          1</div><div class='input'>
 <span class='co'># edgelist with any() of attr2</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>aggr_expression</span><span class='kw'>=</span><span class='st'>'any(attr2)'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span>, aggr_expression<span class='op'>=</span><span class='st'>'any(attr2)'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target attr 
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b      TRUE 
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c      FALSE
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d      TRUE 
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a      TRUE 
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a      TRUE 
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b      FALSE</div><div class='input'>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b      TRUE 
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c      FALSE
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d      TRUE 
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a      TRUE 
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a      TRUE 
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b      FALSE</div><div class='input'>
 <span class='co'># edgelist with all() of attr2</span>
-<span class='fu'>multi2weight</span>(<span class='no'>el</span>, <span class='kw'>aggr_expression</span><span class='kw'>=</span><span class='st'>'all(attr2)'</span>)</div><div class='output co'>#&gt; </span><span style='color: #555555;'># A tibble: 6 x 3</span><span>
-#&gt; </span><span style='color: #555555;'># Groups:   source [4]</span><span>
+<span class='fu'>multi2weight</span><span class='op'>(</span><span class='va'>el</span>, aggr_expression<span class='op'>=</span><span class='st'>'all(attr2)'</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 3</span>
+#&gt; <span style='color: #949494;'># Groups:   source [4]</span>
 #&gt;   source target attr 
-#&gt;   </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #555555;font-style: italic;'>&lt;lgl&gt;</span><span>
-#&gt; </span><span style='color: #555555;'>1</span><span> a      b      TRUE 
-#&gt; </span><span style='color: #555555;'>2</span><span> b      c      FALSE
-#&gt; </span><span style='color: #555555;'>3</span><span> b      d      TRUE 
-#&gt; </span><span style='color: #555555;'>4</span><span> c      a      TRUE 
-#&gt; </span><span style='color: #555555;'>5</span><span> d      a      FALSE
-#&gt; </span><span style='color: #555555;'>6</span><span> d      b      FALSE</div><div class='input'>
-</div></span></pre>
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> a      b      TRUE 
+#&gt; <span style='color: #BCBCBC;'>2</span> b      c      FALSE
+#&gt; <span style='color: #BCBCBC;'>3</span> b      d      TRUE 
+#&gt; <span style='color: #BCBCBC;'>4</span> c      a      TRUE 
+#&gt; <span style='color: #BCBCBC;'>5</span> d      a      FALSE
+#&gt; <span style='color: #BCBCBC;'>6</span> d      b      FALSE</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -255,7 +262,7 @@ the minimum of the `weight` column of the multiedges.</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
 </div>
 
       </footer>
