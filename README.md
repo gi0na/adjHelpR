@@ -92,4 +92,4 @@ of Systems Design, ETH Zürich.
 `adjHelpR` is licensed under the [GNU Affero General Public
 License](https://choosealicense.com/licenses/agpl-3.0/).
 
-\(c\) Copyright ETH Zürich, 2019-2020
+*c* Copyright ETH Zürich, 2019-2021
