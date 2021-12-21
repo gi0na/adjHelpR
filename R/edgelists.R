@@ -87,6 +87,9 @@ el2adj <- function(edge.list, select_cols = NULL, multiedge = FALSE, aggr_expres
 
   if (is.null(nodes)) {
     nodes <- nodes_from_el(dat, 1:2)
+  } else{
+    dat %<>%
+      filter(.data$source %in% nodes, .data$target %in% nodes)
   }
 # TODO: add subset for nodes if nodes are not all
   if(isFALSE(drop_names))
